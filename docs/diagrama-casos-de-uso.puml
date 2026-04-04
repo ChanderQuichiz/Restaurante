@@ -1,0 +1,30 @@
+@startuml
+left to right direction
+actor Mesero
+actor Usuario
+actor Cajero
+actor Cocinero
+actor Administrador
+rectangle "Sistema de Gestión de Restaurante" {
+    Usuario --> (Iniciar Sesión)
+    Usuario --> (Cerrar sesion)
+    Usuario --> (Consultar Platos)
+    Mesero --> (Registrar Pedido)
+    Mesero --> (Consultar Mesa)
+    Mesero --> (Actualizar estado de Mesa)
+    Cajero --> (Registrar Pago)
+    Usuario --> (Consultar Pedido)
+    Cajero --> (Generar factura)
+    Usuario --> (Solicitud de  Contrato)
+    Administrador --> (Consultar Usuarios)
+    Administrador --> (Actualizar estado de contrato)
+    Administrador --> (Registrar platos)
+    Administrador --> (Actualizar platos)
+    Administrador --> (Gestionar solicitudes)
+    Cocinero --> (Cambia el estado del pedido)
+}
+Cajero -|> Usuario
+Mesero -|> Usuario
+Cocinero -|> Usuario
+Administrador -|> Usuario
+@enduml

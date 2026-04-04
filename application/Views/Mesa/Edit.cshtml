@@ -1,0 +1,35 @@
+<div class="content-card form-card">
+    <div class="page-top">
+        <div class="page-title-wrap">
+            <img src="assets/rombo.png" class="page-mark">
+            <h1 class="page-title">Editar Mesa</h1>
+        </div>
+    </div>
+
+    <form class="form-panel">
+        <div class="form-grid">
+            <div class="field-group">
+                <label>Capacidad</label>
+                <input type="number" class="form-input" value="4" />
+            </div>
+            <div class="field-group">
+                <label>Número de Piso</label>
+                <input type="number" class="form-input" value="1" />
+            </div>
+            <div class="field-group">
+                <label>Estado</label>
+                <select class="form-select">
+                    <option value="">-- Seleccionar --</option>
+                    <option value="LIBRE" selected>LIBRE</option>
+                    <option value="OCUPADO">OCUPADO</option>
+                    <option value="RESERVADO">RESERVADO</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="primary-btn">Actualizar</button>
+            <a href="/Mesa/Index" class="secondary-btn">Volver</a>
+        </div>
+    </form>
+</div>

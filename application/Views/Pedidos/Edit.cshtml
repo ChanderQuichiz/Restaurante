@@ -1,0 +1,50 @@
+@model PedidosPagosMVC.Models.Pedido
+@{
+    ViewData["Title"] = "Editar Pedido";
+}
+
+<div class="content-card form-card">
+    <div class="page-top">
+        <div class="page-title-wrap">
+            <div class="diamond"></div>
+            <h1 class="page-title">Editar Pedido</h1>
+        </div>
+    </div>
+
+    <form asp-action="Edit" method="post" class="form-panel">
+        @Html.AntiForgeryToken()
+        <input asp-for="Id" type="hidden" />
+
+        <div class="form-grid">
+            <div class="field-group">
+                <label asp-for="Cliente">Cliente</label>
+                <input asp-for="Cliente" class="form-input" />
+                <span asp-validation-for="Cliente" class="text-danger"></span>
+            </div>
+            <div class="field-group">
+                <label asp-for="Fecha">Fecha</label>
+                <input asp-for="Fecha" type="date" class="form-input" />
+                <span asp-validation-for="Fecha" class="text-danger"></span>
+            </div>
+            <div class="field-group">
+                <label asp-for="Monto">Monto</label>
+                <input asp-for="Monto" class="form-input" />
+                <span asp-validation-for="Monto" class="text-danger"></span>
+            </div>
+            <div class="field-group">
+                <label asp-for="Estado">Estado</label>
+                <select asp-for="Estado" class="form-select">
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="En proceso">En proceso</option>
+                    <option value="Entregado">Entregado</option>
+                </select>
+                <span asp-validation-for="Estado" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="primary-btn">Actualizar</button>
+            <a asp-action="Index" class="secondary-btn">Volver</a>
+        </div>
+    </form>
+</div>

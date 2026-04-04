@@ -1,0 +1,55 @@
+@startuml
+class "Usuario" {
+    - id: int
+    - nombre: String
+    - email: String
+    - contraseña: String
+    - rol: String
+    - estado: String
+    - fechaExpiracion: Date
+}
+class "Platos"{
+    - id: int
+    - nombre: String
+    - precio: double
+    - categoria: String
+    - estado: String
+}
+class "Pedidos"{
+    - id: int
+    - fecha: Date
+    - total: double
+    - estado: String
+}
+class "Solicitud"{
+    - id: int
+    - fecha: Date
+    - estado: String
+    - contrato: blob
+}
+class "DetallePedido"{
+    - id: int
+    - cantidad: int
+    - precioUnitario: double
+}
+class "Mesas"{
+    - id: int
+    - numero: int
+    - capacidad: int
+    - estado: String
+}
+class "Pagos"{
+    - id: int
+    - fecha: Date
+    - monto: double
+    - metodoPago: String
+}
+Usuario "1" -- "0..*" Pedidos 
+Usuario "1" -- "0..*" Solicitud 
+Pedidos "1" -- "0..*" DetallePedido 
+DetallePedido "1" -- "1" Platos 
+Usuario "1" -- "0..*" Mesas 
+Pedidos "1" -- "1" Mesas
+Usuario "1" -- "0..*" Pagos
+Pedidos "1" -- "1" Pagos
+@enduml
