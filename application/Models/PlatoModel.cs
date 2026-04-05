@@ -9,12 +9,19 @@ public class PlatoModel
 {
     [Key]
     public int id {get; set;}
+
     [Required]
-    public string nombre {get; set;}
+    [StringLength(120)]
+    public string nombre {get; set;} = string.Empty;
+
     [Required]
     public double precio {get; set;}
+
     [Required]
-    public string categoria {get; set;}
+    [MaxLength(80)]
+    public string categoria {get; set;} = string.Empty;
+
     [Required]
-    public string estado   {get; set;}
+    [MaxLength(30)]
+    public string estado   {get; set;} = string.Empty;
 }

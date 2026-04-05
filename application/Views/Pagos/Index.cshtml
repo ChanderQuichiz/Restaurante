@@ -1,4 +1,4 @@
-@model List<PedidosPagosMVC.Models.Pago>
+@model List<application.Models.PagoModel>
 @{
     ViewData["Title"] = "Pagos";
 }
@@ -19,7 +19,7 @@
         </div>
         <div class="filter-box">
             <label>Método</label>
-            <select class="select-pill" disabled>
+            <select class="select-pill" name="metodo">
                 <option>Todos</option>
                 <option>Efectivo</option>
                 <option>Tarjeta</option>
@@ -28,7 +28,7 @@
         </div>
         <div class="filter-box">
             <label>Fecha</label>
-            <input type="date" class="input-pill" disabled />
+            <input type="date" class="input-pill" name="fecha" />
         </div>
         <div class="filter-box">
             <label>Acción</label>
@@ -54,19 +54,19 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td>PG-@item.Id.ToString("000")</td>
-                            <td>P-@item.PedidoId.ToString("000")</td>
-                            <td>S/ @item.Monto.ToString("0.00")</td>
-                            <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
-                            <td class="status-green">@item.Metodo</td>
+                                                        <td>PG-@item.id.ToString("000")</td>
+                                                        <td>P-@item.pedidoId.ToString("000")</td>
+                                                        <td>S/ @item.monto.ToString("0.00")</td>
+                                                        <td>@item.fecha.ToString("dd/MM/yyyy")</td>
+                                                        <td class="status-green">@item.metodoPago</td>
                             <td>
                               <div class="action-buttons">
-                                                                <a href="/Pagos/Edit/@item.Id" class="action-btn" title="Editar">
-                                  <img src="assets/editar.png">
+                                                                                                                                <a href="/Pagos/Edit/@item.id" class="action-btn" title="Editar">
+                                  <img src="/assets/editar.png">
                                 </a>
-                                                                <form action="/Pagos/Delete/@item.Id" method="post" class="action-form" onsubmit="return confirm('¿Está seguro que desea eliminar este pago?');">
-                                                                    <button type="submit" class="action-btn" title="Eliminar">
-                                    <img src="assets/eliminar.png">
+                                                                                                                                <form action="/Pagos/Delete/@item.id" method="post" class="inline-form" onsubmit="return confirm('¿Está seguro que desea eliminar este pago?');">
+                                                                    <button type="submit" class="action-btn form-delete-btn" title="Eliminar">
+                                    <img src="/assets/eliminar.png">
                                   </button>
                                 </form>
                               </div>
@@ -77,7 +77,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="5" class="empty-box">No se encontraron pagos.</td>
+                        <td colspan="6" class="empty-box">No se encontraron pagos.</td>
                     </tr>
                 }
             </tbody>

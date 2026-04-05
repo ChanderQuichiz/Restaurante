@@ -1,4 +1,4 @@
-@model PedidosPagosMVC.Models.Pedido
+@model application.Models.PedidoModel
 @{
     ViewData["Title"] = "Editar Pedido";
 }
@@ -13,32 +13,37 @@
 
     <form asp-action="Edit" method="post" class="form-panel">
         @Html.AntiForgeryToken()
-        <input asp-for="Id" type="hidden" />
+        <input asp-for="id" type="hidden" />
 
         <div class="form-grid">
             <div class="field-group">
-                <label asp-for="Cliente">Cliente</label>
-                <input asp-for="Cliente" class="form-input" />
-                <span asp-validation-for="Cliente" class="text-danger"></span>
+                <label asp-for="usuarioId">Usuario ID</label>
+                <input asp-for="usuarioId" type="number" class="form-input" />
+                <span asp-validation-for="usuarioId" class="text-danger"></span>
             </div>
             <div class="field-group">
-                <label asp-for="Fecha">Fecha</label>
-                <input asp-for="Fecha" type="date" class="form-input" />
-                <span asp-validation-for="Fecha" class="text-danger"></span>
+                <label asp-for="mesaId">Mesa ID</label>
+                <input asp-for="mesaId" type="number" class="form-input" />
+                <span asp-validation-for="mesaId" class="text-danger"></span>
             </div>
             <div class="field-group">
-                <label asp-for="Monto">Monto</label>
-                <input asp-for="Monto" class="form-input" />
-                <span asp-validation-for="Monto" class="text-danger"></span>
+                <label asp-for="fecha">Fecha</label>
+                <input asp-for="fecha" type="date" class="form-input" />
+                <span asp-validation-for="fecha" class="text-danger"></span>
             </div>
             <div class="field-group">
-                <label asp-for="Estado">Estado</label>
-                <select asp-for="Estado" class="form-select">
+                <label asp-for="total">Total</label>
+                <input asp-for="total" type="number" step="0.01" class="form-input" />
+                <span asp-validation-for="total" class="text-danger"></span>
+            </div>
+            <div class="field-group">
+                <label asp-for="estado">Estado</label>
+                <select asp-for="estado" class="form-select">
                     <option value="Pendiente">Pendiente</option>
                     <option value="En proceso">En proceso</option>
                     <option value="Entregado">Entregado</option>
                 </select>
-                <span asp-validation-for="Estado" class="text-danger"></span>
+                <span asp-validation-for="estado" class="text-danger"></span>
             </div>
         </div>
 

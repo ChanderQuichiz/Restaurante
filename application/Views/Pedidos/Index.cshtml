@@ -1,4 +1,4 @@
-@model List<PedidosPagosMVC.Models.Pedido>
+@model List<application.Models.PedidoModel>
 @{
     ViewData["Title"] = "Pedidos";
 }
@@ -15,7 +15,7 @@
     <form method="get" class="filters-grid">
         <div class="filter-box">
             <label>Buscar</label>
-            <input type="text" name="buscar" class="input-pill" value="@Context.Request.Query["buscar"]" placeholder="Buscar por cliente o estado" />
+            <input type="text" name="buscar" class="input-pill" value="@Context.Request.Query["buscar"]" placeholder="Buscar por id o estado" />
         </div>
         <div class="filter-box">
             <label>Estado</label>
@@ -28,7 +28,7 @@
         </div>
         <div class="filter-box">
             <label>Fecha</label>
-            <input type="date" class="input-pill" disabled />
+            <input type="date" class="input-pill" name="fecha" />
         </div>
         <div class="filter-box">
             <label>Acción</label>
@@ -41,9 +41,9 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Cliente</th>
+                    <th>Usuario</th>
                     <th>Fecha</th>
-                    <th>Monto</th>
+                    <th>Total</th>
                     <th>Estado</th>
                     <th>Acción</th>
                 </tr>
@@ -53,21 +53,21 @@
                 {
                     @foreach (var item in Model)
                     {
-                        var statusClass = item.Estado == "Entregado" ? "status-green" : item.Estado == "En proceso" ? "status-yellow" : "status-red";
+                                                var statusClass = item.estado == "Entregado" ? "status-green" : item.estado == "En proceso" ? "status-yellow" : "status-red";
                         <tr>
-                            <td>P-@item.Id.ToString("000")</td>
-                            <td>@item.Cliente</td>
-                            <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
-                            <td>S/ @item.Monto.ToString("0.00")</td>
-                            <td class="@statusClass">@item.Estado</td>
+                                                        <td>P-@item.id.ToString("000")</td>
+                                                        <td>USR-@item.usuarioId.ToString("000")</td>
+                                                        <td>@item.fecha.ToString("dd/MM/yyyy")</td>
+                                                        <td>S/ @item.total.ToString("0.00")</td>
+                                                        <td class="@statusClass">@item.estado</td>
                             <td>
                               <div class="action-buttons">
-                                                                <a href="/Pedidos/Edit/@item.Id" class="action-btn" title="Editar">
-                                  <img src="assets/editar.png">
+                                                                                                                                <a href="/Pedidos/Edit/@item.id" class="action-btn" title="Editar">
+                                  <img src="/assets/editar.png">
                                 </a>
-                                                                <form action="/Pedidos/Delete/@item.Id" method="post" class="action-form" onsubmit="return confirm('¿Está seguro que desea eliminar este pedido?');">
-                                                                    <button type="submit" class="action-btn" title="Eliminar">
-                                    <img src="assets/eliminar.png">
+                                                                                                                                <form action="/Pedidos/Delete/@item.id" method="post" class="inline-form" onsubmit="return confirm('¿Está seguro que desea eliminar este pedido?');">
+                                                                    <button type="submit" class="action-btn form-delete-btn" title="Eliminar">
+                                    <img src="/assets/eliminar.png">
                                   </button>
                                 </form>
                               </div>

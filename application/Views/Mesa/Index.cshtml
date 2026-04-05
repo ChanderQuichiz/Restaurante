@@ -1,241 +1,141 @@
 ﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @{
   ViewData["Title"] = "Mesa";
 }
 
-  <!-- ═══════════════════════ CONTENIDO PRINCIPAL ═══════════════════════ -->
-
-
-    <!-- ── Encabezado ── -->
-    <header>
-
-      <div class="header-logo">
-        <img src="assets/rombo.png">
-        <h1>GESTION DE MESAS</h1>
-      </div>
-
-      <a href="/Mesa/Create" class="btn-primary-custom" style="text-decoration:none; display:inline-block;">Nueva mesa</a>
-
-<el-dialog>
-</el-dialog>
-
-
-
-
-
-    </header>
-
-
-    <!-- ── Filtros — estilo fieldset ── -->
-   <div class="filters-container">
-
-  <!-- BUSCAR -->
-  <fieldset class="filter-fieldset">
-    <legend>Buscar</legend>
-    <input
-      type="text"
-      placeholder="Buscar por codigo"
-    />
-  </fieldset>
-
-  <!-- CAPACIDAD -->
-  <fieldset class="filter-fieldset">
-    <legend>Capacidad</legend>
-
-    <div class="select-wrapper">
-      <select>
-        <option>Todos</option>
-        <option>2 personas</option>
-        <option>4 personas</option>
-        <option>6 personas</option>
-        <option>8 personas</option>
-      </select>
-      <span>▾</span>
+<div class="content-card">
+    <div class="page-top">
+        <div class="page-title-wrap">
+            <img src="/assets/rombo.png" class="page-mark">
+            <h1 class="page-title">Gestión de Mesas</h1>
+        </div>
+        <a href="/Mesa/Create" class="primary-btn">Nueva mesa</a>
     </div>
 
-  </fieldset>
+    <form method="get" class="filters-grid">
+        <div class="filter-box">
+            <label>Buscar</label>
+            <input type="text" name="buscar" class="input-pill" placeholder="Buscar por código" />
+        </div>
+        <div class="filter-box">
+            <label>Piso</label>
+            <select class="select-pill" name="piso">
+                <option>Todos</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+            </select>
+        </div>
+        <div class="filter-box">
+            <label>Estado</label>
+            <select class="select-pill" name="estado">
+                <option>Todos</option>
+                <option>LIBRE</option>
+                <option>OCUPADO</option>
+                <option>RESERVADO</option>
+            </select>
+        </div>
+        <div class="filter-box">
+            <label>Acción</label>
+            <button type="submit" class="primary-btn filter-submit-btn">Filtrar</button>
+        </div>
+    </form>
 
-  <!-- PISO -->
-  <fieldset class="filter-fieldset">
-    <legend>Piso</legend>
-
-    <div class="select-wrapper">
-      <select>
-        <option>Todos</option>
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
-      </select>
-      <span>▾</span>
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Capacidad</th>
+                    <th>Piso</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>E2D08A</td>
+                    <td>30</td>
+                    <td>2</td>
+                    <td class="status-occupied">OCUPADO</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="/Mesa/Edit/1" class="action-btn" title="Editar">
+                                <img src="/assets/editar.png">
+                            </a>
+                            <form action="/Mesa/Delete/1" method="post" class="inline-form" onsubmit="return confirm('¿Está seguro que desea eliminar esta mesa?');">
+                                <button type="submit" class="action-btn form-delete-btn" title="Eliminar">
+                                    <img src="/assets/eliminar.png">
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>A1F03C</td>
+                    <td>4</td>
+                    <td>1</td>
+                    <td class="status-free">LIBRE</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="/Mesa/Edit/2" class="action-btn" title="Editar">
+                                <img src="/assets/editar.png">
+                            </a>
+                            <form action="/Mesa/Delete/2" method="post" class="inline-form" onsubmit="return confirm('¿Está seguro que desea eliminar esta mesa?');">
+                                <button type="submit" class="action-btn form-delete-btn" title="Eliminar">
+                                    <img src="/assets/eliminar.png">
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>B9K12X</td>
+                    <td>6</td>
+                    <td>3</td>
+                    <td class="status-occupied">OCUPADO</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="/Mesa/Edit/3" class="action-btn" title="Editar">
+                                <img src="/assets/editar.png">
+                            </a>
+                            <form action="/Mesa/Delete/3" method="post" class="inline-form" onsubmit="return confirm('¿Está seguro que desea eliminar esta mesa?');">
+                                <button type="submit" class="action-btn form-delete-btn" title="Eliminar">
+                                    <img src="/assets/eliminar.png">
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>C4M77Z</td>
+                    <td>8</td>
+                    <td>1</td>
+                    <td>RESERVADO</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="/Mesa/Edit/4" class="action-btn" title="Editar">
+                                <img src="/assets/editar.png">
+                            </a>
+                            <form action="/Mesa/Delete/4" method="post" class="inline-form" onsubmit="return confirm('¿Está seguro que desea eliminar esta mesa?');">
+                                <button type="submit" class="action-btn form-delete-btn" title="Eliminar">
+                                    <img src="/assets/eliminar.png">
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
-  </fieldset>
-
-  <!-- ESTADO -->
-  <fieldset class="filter-fieldset">
-    <legend>Estado</legend>
-
-    <div class="select-wrapper">
-      <select>
-        <option>Todos</option>
-        <option>LIBRE</option>
-        <option>OCUPADO</option>
-        <option>RESERVADO</option>
-      </select>
-      <span>▾</span>
+    <div class="pagination-mock">
+        <div class="page-pill">‹</div>
+        <div class="page-pill active">1</div>
+        <div class="page-pill">2</div>
+        <div class="page-pill">3</div>
+        <div class="page-pill">›</div>
     </div>
-
-  </fieldset>
-
 </div>
-
-
-    <!-- ── Tabla ── -->
-    <div class="table-wrapper">
-      <table>
-
-        <!-- cabecera -->
-        <thead>
-          <tr>
-            <th>CODIGo</th>
-            <th>capacidad</th>
-            <th>N.piso</th>
-            <th>Estado</th>
-            <th>accion</th>
-          </tr>
-        </thead>
-
-        <!-- filas -->
-        <tbody>
-
-          <!-- fila 1 — OCUPADO -->
-          <tr>
-            <td>E2D08A</td>
-            <td>30</td>
-            <td>2</td>
-            <td class="status-occupied">OCUPADO</td>
-            <td>
-              <div class="action-buttons">
-                <a href="/Mesa/Edit/1" class="action-btn" title="Editar" style="display:inline-block; text-decoration:none;">
-                  <img src="assets/editar.png">
-                </a>
-                <form action="/Mesa/Delete/1" method="post" style="display:inline;" onsubmit="return confirm('¿Está seguro que desea eliminar esta mesa?');">
-                  <button type="submit" class="action-btn" title="Eliminar" style="border:none; background:none; cursor:pointer; padding:0.25rem;">
-                    <img src="assets/eliminar.png">
-                  </button>
-                </form>
-              </div>
-            </td>
-          </tr>
-
-          <!-- fila 2 — LIBRE -->
-          <tr>
-            <td>A1F03C</td>
-            <td>4</td>
-            <td>1</td>
-            <td class="status-free">LIBRE</td>
-            <td>
-              <div class="action-buttons">
-                <a href="/Mesa/Edit/2" class="action-btn" title="Editar" style="display:inline-block; text-decoration:none;">
-                  <img src="assets/editar.png">
-                </a>
-                <form action="/Mesa/Delete/2" method="post" style="display:inline;" onsubmit="return confirm('¿Está seguro que desea eliminar esta mesa?');">
-                  <button type="submit" class="action-btn" title="Eliminar" style="border:none; background:none; cursor:pointer; padding:0.25rem;">
-                    <img src="assets/eliminar.png">
-                  </button>
-                </form>
-              </div>
-            </td>
-          </tr>
-
-          <!-- fila 3 — OCUPADO -->
-          <tr>
-            <td>B9K12X</td>
-            <td>6</td>
-            <td>3</td>
-            <td class="status-occupied">OCUPADO</td>
-            <td>
-              <div class="action-buttons">
-                <a href="/Mesa/Edit/3" class="action-btn" title="Editar" style="display:inline-block; text-decoration:none;">
-                  <img src="assets/editar.png">
-                </a>
-                <form action="/Mesa/Delete/3" method="post" style="display:inline;" onsubmit="return confirm('¿Está seguro que desea eliminar esta mesa?');">
-                  <button type="submit" class="action-btn" title="Eliminar" style="border:none; background:none; cursor:pointer; padding:0.25rem;">
-                    <img src="assets/eliminar.png">
-                  </button>
-                </form>
-              </div>
-            </td>
-          </tr>
-
-          <!-- fila 4 — RESERVADO -->
-          <tr>
-            <td>C4M77Z</td>
-            <td>8</td>
-            <td>1</td>
-            <td>RESERVADO</td>
-            <td>
-              <div class="action-buttons">
-                <a href="/Mesa/Edit/4" class="action-btn" title="Editar" style="display:inline-block; text-decoration:none;">
-                  <img src="assets/editar.png">
-                </a>
-                <form action="/Mesa/Delete/4" method="post" style="display:inline;" onsubmit="return confirm('¿Está seguro que desea eliminar esta mesa?');">
-                  <button type="submit" class="action-btn" title="Eliminar" style="border:none; background:none; cursor:pointer; padding:0.25rem;">
-                    <img src="assets/eliminar.png">
-                  </button>
-                </form>
-              </div>
-            </td>
-          </tr>
-
-        </tbody>
-      </table>
-    </div>
-
-
-    <!-- ── Paginación ── -->
-    <nav class="flex justify-center items-center gap-2 pb-2">
-
-      <!-- anterior -->
-      <button class="w-10 h-10 flex items-center justify-center border-2 border-[#ccc08e]
-                     rounded-lg bg-[#fff7d7] text-[#ccc08e] cursor-pointer"
-              style="font-size:16px">‹</button>
-
-      <!-- página activa -->
-      <button class="w-10 h-10 flex items-center justify-center border-2 border-[#383835]
-                     rounded-lg bg-[#383835] text-[#fff7d7] cursor-pointer"
-              style="font-size:16px">1</button>
-
-      <button class="w-10 h-10 flex items-center justify-center border-2 border-[#ccc08e]
-                     rounded-lg bg-[#fff7d7] text-[#e2d49c] cursor-pointer"
-              style="font-size:16px">2</button>
-
-      <button class="w-10 h-10 flex items-center justify-center border-2 border-[#ccc08e]
-                     rounded-lg bg-[#fff7d7] text-[#e2d49c] cursor-pointer"
-              style="font-size:16px">3</button>
-
-      <button class="w-10 h-10 flex items-center justify-center border-2 border-[#ccc08e]
-                     rounded-lg bg-[#fff7d7] text-[#e2d49c] cursor-pointer"
-              style="font-size:16px">4</button>
-
-      <button class="w-10 h-10 flex items-center justify-center border-2 border-[#ccc08e]
-                     rounded-lg bg-[#fff7d7] text-[#e2d49c] cursor-pointer"
-              style="font-size:16px">5</button>
-
-              <span class="text-[#ccc08e] px-1" style="font-size:18px">…</span>
-
-      <button class="w-10 h-10 flex items-center justify-center border-2 border-[#ccc08e]
-                     rounded-lg bg-[#fff7d7] text-[#e2d49c] cursor-pointer"
-              style="font-size:16px">12</button>
-
-      <!-- siguiente -->
-                      <button class="w-10 h-10 flex items-center justify-center border-2 border-[#ccc08e]
-                      rounded-lg bg-[#fff7d7] text-[#ccc08e] cursor-pointer"
-                    style="font-size:16px">›</button>
-
-    </nav>
 
 
