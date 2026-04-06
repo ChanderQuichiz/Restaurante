@@ -1,10 +1,13 @@
 using application.Data;
+using application.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IMesaService, MesaService>();
+builder.Services.AddScoped<IPlatoService, PlatoService>();
 builder.Services.AddDbContext<DbAppContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))));
 var app = builder.Build();

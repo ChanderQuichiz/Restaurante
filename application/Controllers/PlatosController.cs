@@ -1,13 +1,24 @@
+using application.Dtos;
+using application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace application.Controllers
 {
     public class PlatosController : Controller
     {
-        [HttpGet]
-        public IActionResult Index()
+private readonly IPlatoService platoService;
+
+public PlatosController(IPlatoService platoService)
         {
-            return View();
+            this.platoService = platoService;
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Index(int page = 1)
+        {
+            var model = await platoService.obtenerPlatoVM(page);
+            return View(model);
         }
 
         [HttpGet]
@@ -17,26 +28,30 @@ namespace application.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int id)
-        {
-            return View();
+        public async Task<IActionResult> Edit(int id)
+        {   
+            var plato = await platoService.obtenerPlatoPorId(id);
+            return View(plato);
         }
 
         [HttpPost]
-        public IActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create(CrearPlatoDto crearPlatoDto)
         {
+            await platoService.crearPlatoDto(crearPlatoDto);
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
-        public IActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(PlatoDto platoDto)
         {
+            await platoService.actualizarPlatoDto(platoDto);
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
-        public IActionResult Delete(int id)
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
         {
+            await platoService.eliminarPlato(id);
             return RedirectToAction(nameof(Index));
         }
     }

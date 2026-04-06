@@ -5,19 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - application</title>
 
-    <!-- Tailwind -->
+
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Fuente -->
     <link href="https://fonts.googleapis.com/css2?family=Holtwood+One+SC&display=swap" rel="stylesheet" />
 
-    <!-- (Opcional) estilos del proyecto -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 
 <body class="flex min-h-screen [font-family:'Holtwood_One_SC',serif]">
 
-    <!-- ═══════════════════════ SIDEBAR ═══════════════════════ -->
+    @{
+        var currentController = (ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty).ToLowerInvariant();
+    }
+
+    <!-- SIDEBAR -->
     <aside class="w-[308px] min-w-[308px] bg-[#d82929] flex flex-col">
 
         <!-- Logo -->
@@ -28,26 +30,26 @@
         <!-- Navegación -->
         <nav class="flex-1">
 
-            <a asp-controller="Mesa" asp-action="Index"
-               class="flex items-center gap-3 px-5 py-4 text-[#fff7d7] no-underline bg-black/15">
+                <a asp-controller="Mesa" asp-action="Index"
+                    class="sidebar-link flex items-center gap-3 px-5 py-4 text-[#fff7d7] no-underline @(currentController == "mesa" ? "sidebar-link-active" : "")">
                 <img src="/assets/mesas.png" class="w-9 h-9 object-contain shrink-0">
                 <span class="nav-item-title">MESAS</span>
             </a>
 
             <a asp-controller="Platos" asp-action="Index"
-               class="flex items-center gap-3 px-5 py-4 text-[#fff7d7] no-underline">
+                    class="sidebar-link flex items-center gap-3 px-5 py-4 text-[#fff7d7] no-underline @(currentController == "platos" ? "sidebar-link-active" : "")">
                 <img src="/assets/platos.png" class="w-9 h-9 object-contain shrink-0">
                 <span class="nav-item-title">PLATOS</span>
             </a>
 
             <a asp-controller="Pedidos" asp-action="Index"
-               class="flex items-center gap-3 px-5 py-4 text-[#fff7d7] no-underline">
+                    class="sidebar-link flex items-center gap-3 px-5 py-4 text-[#fff7d7] no-underline @(currentController == "pedidos" ? "sidebar-link-active" : "")">
                 <img src="/assets/pedidos.png" class="w-9 h-9 object-contain shrink-0">
                 <span class="nav-item-title">PEDIDOS</span>
             </a>
 
             <a asp-controller="Pagos" asp-action="Index"
-               class="flex items-center gap-3 px-5 py-4 text-[#fff7d7] no-underline">
+                    class="sidebar-link flex items-center gap-3 px-5 py-4 text-[#fff7d7] no-underline @(currentController == "pagos" ? "sidebar-link-active" : "")">
                 <img src="/assets/pagos.png" class="w-9 h-9 object-contain shrink-0">
                 <span class="nav-item-title">PAGOS</span>
             </a>
@@ -66,7 +68,7 @@
     </aside>
 
 
-    <!-- ═══════════════════════ CONTENIDO PRINCIPAL ═══════════════════════ -->
+    <!--EL Main -->
     <main class="flex-1 bg-[#fff7d7] px-11 py-9 flex flex-col gap-7">
 
         @RenderBody()
@@ -74,7 +76,6 @@
     </main>
 
 
-    <!-- Scripts (del primer layout) -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 

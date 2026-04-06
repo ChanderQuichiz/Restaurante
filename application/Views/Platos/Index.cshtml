@@ -1,3 +1,5 @@
+@model application.Dtos.PlatoVM
+
 @{
     ViewData["Title"] = "Platos";
 }
@@ -54,72 +56,62 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>PL-001</td>
-                    <td>Lomo saltado</td>
-                    <td>S/ 24.90</td>
-                    <td>Fondo</td>
-                    <td class="status-green">ACTIVO</td>
+                @foreach (var plato in Model.platos){
+                    <tr>
+                    <td>@plato.id</td>
+                    <td>@plato.nombre</td>
+                    <td>S/ @plato.precio.ToString("F2")</td>
+                    <td>@plato.categoria</td>
+                    <td class="status-green">@plato.estado</td>
                     <td>
                         <div class="action-buttons">
-                            <a href="/Platos/Edit/1" class="action-btn" title="Editar">
+                              <div class="action-buttons">
+                            <a href="@Url.Action("Edit", "Platos", new { id = plato.id })" class="action-btn" title="Editar">  
                                 <img src="/assets/editar.png" alt="Editar">
                             </a>
-                            <form action="/Platos/Delete/1" method="post" class="inline-form" onsubmit="return confirm('¿Está seguro que desea eliminar este plato?');">
-                                <button type="submit" class="action-btn form-delete-btn" title="Eliminar">
-                                    <img src="/assets/eliminar.png" alt="Eliminar">
-                                </button>
-                            </form>
+                            <a href="@Url.Action("Delete", "Platos", new { id = plato.id })" class="action-btn form-delete-btn" title="Eliminar">
+                                <img src="/assets/eliminar.png" alt="Eliminar">
+                            </a>
+                        
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td>PL-002</td>
-                    <td>Inka Cola</td>
-                    <td>S/ 6.50</td>
-                    <td>Bebida</td>
-                    <td class="status-yellow">AGOTADO</td>
-                    <td>
-                        <div class="action-buttons">
-                            <a href="/Platos/Edit/2" class="action-btn" title="Editar">
-                                <img src="/assets/editar.png" alt="Editar">
-                            </a>
-                            <form action="/Platos/Delete/2" method="post" class="inline-form" onsubmit="return confirm('¿Está seguro que desea eliminar este plato?');">
-                                <button type="submit" class="action-btn form-delete-btn" title="Eliminar">
-                                    <img src="/assets/eliminar.png" alt="Eliminar">
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>PL-003</td>
-                    <td>Suspiro a la limeña</td>
-                    <td>S/ 12.00</td>
-                    <td>Postre</td>
-                    <td class="status-red">INACTIVO</td>
-                    <td>
-                        <div class="action-buttons">
-                            <a href="/Platos/Edit/3" class="action-btn" title="Editar">
-                                <img src="/assets/editar.png" alt="Editar">
-                            </a>
-                            <form action="/Platos/Delete/3" method="post" class="inline-form" onsubmit="return confirm('¿Está seguro que desea eliminar este plato?');">
-                                <button type="submit" class="action-btn form-delete-btn" title="Eliminar">
-                                    <img src="/assets/eliminar.png" alt="Eliminar">
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
+                }
+                
+        
             </tbody>
         </table>
     </div>
 
     <div class="pagination-mock">
-        <div class="page-pill">‹</div>
-        <div class="page-pill active">1</div>
-        <div class="page-pill">2</div>
-        <div class="page-pill">3</div>
-        <div class="page-pill">›</div>
+        @if (Model.page > 1)
+        {
+            <a asp-action="Index" asp-route-page="@(Model.page - 1)" class="page-pill">‹</a>
+        }
+        else
+        {
+            <div class="page-pill">‹</div>
+        }
+
+        @for (int i = 1; i <= Model.totalPages; i++)
+        {
+            if (i == Model.page)
+            {
+                <a asp-action="Index" asp-route-page="@i" class="page-pill active">@i</a>
+            }
+            else
+            {
+                <a asp-action="Index" asp-route-page="@i" class="page-pill">@i</a>
+            }
+        }
+
+        @if (Model.page < Model.totalPages)
+        {
+            <a asp-action="Index" asp-route-page="@(Model.page + 1)" class="page-pill">›</a>
+        }
+        else
+        {
+            <div class="page-pill">›</div>
+        }
     </div>
 </div>

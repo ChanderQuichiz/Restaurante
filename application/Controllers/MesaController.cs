@@ -1,14 +1,23 @@
+using application.Dtos;
+using application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace application.Controllers
 {
     public class MesaController : Controller
     {
+        private readonly IMesaService mesaService;
+        public MesaController(IMesaService mesaService)
+        {
+            this.mesaService = mesaService;
+        }
+        
         // GET: MesaController
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            return View();
+            var model = await mesaService.obtenerMesaVM(page);
+            return View(model);
         }
 
         // GET: MesaController/Create
@@ -20,54 +29,34 @@ namespace application.Controllers
 
         // POST: MesaController/Create
         [HttpPost]
-        public IActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create(CrearMesaDto crearMesaDto)
         {
-            try
-            {
-                // TODO: Agregar lógica de guardar
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            await mesaService.crearMesaDto(crearMesaDto);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: MesaController/Edit/5
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            return View();
+            var mesa = await mesaService.obtenerMesaPorId(id);
+            return View(mesa);
         }
 
         // POST: MesaController/Edit/5
         [HttpPost]
-        public IActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(MesaDto mesaDto)
         {
-            try
-            {
-                // TODO: Agregar lógica de actualizar
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            await mesaService.actualizarMesaDto(mesaDto);
+            return RedirectToAction(nameof(Index));
         }
 
         // POST: MesaController/Delete/5
-        [HttpPost]
-        public IActionResult Delete(int id)
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                // TODO: Agregar lógica de eliminar
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return RedirectToAction(nameof(Index));
-            }
+            await mesaService.eliminarMesa(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

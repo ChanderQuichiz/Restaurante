@@ -49,6 +49,18 @@ body {
   color: #fff7d7;
 }
 
+.sidebar-link {
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-link:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-link-active {
+  background-color: rgba(0, 0, 0, 0.35);
+}
+
 /*  VALIDACIÓN - ESTILOS  */
 
 .text-danger {

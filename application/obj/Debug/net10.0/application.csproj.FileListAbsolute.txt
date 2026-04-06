@@ -184,4 +184,5 @@ C:\Users\chand\OneDrive\Documents\Restaurante\application\obj\Debug\net10.0\refi
 C:\Users\chand\OneDrive\Documents\Restaurante\application\obj\Debug\net10.0\application.pdb
 C:\Users\chand\OneDrive\Documents\Restaurante\application\obj\Debug\net10.0\application.genruntimeconfig.cache
 C:\Users\chand\OneDrive\Documents\Restaurante\application\obj\Debug\net10.0\ref\application.dll
-C:\Users\chand\OneDrive\Documents\Restaurante\application\obj\Debug\net10.0\compressed\xavr0g8rgu-{0}-tehxfnksdo-tehxfnksdo.gz
+C:\Users\chand\OneDrive\Documents\Restaurante\application\obj\Debug\net10.0\application.sourcelink.json
+C:\Users\chand\OneDrive\Documents\Restaurante\application\obj\Debug\net10.0\compressed\xavr0g8rgu-{0}-l5sdgt6ifo-l5sdgt6ifo.gz

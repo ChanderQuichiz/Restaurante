@@ -1,3 +1,5 @@
+
+@model application.Dtos.PlatoDto
 @{
     ViewData["Title"] = "Editar Plato";
 }
@@ -10,21 +12,21 @@
         </div>
     </div>
 
-    <form class="form-panel">
-        <input type="hidden" value="1" />
+    <form asp-action="Edit" method="post" class="form-panel">
+        <input type="hidden" asp-for="id" />
 
         <div class="form-grid">
             <div class="field-group">
                 <label>Nombre</label>
-                <input type="text" class="form-input" value="Lomo saltado" />
+                <input type="text" class="form-input" asp-for="nombre" value="@Model.nombre" />
             </div>
             <div class="field-group">
                 <label>Precio</label>
-                <input type="number" step="0.01" class="form-input" value="24.90" />
+                <input type="number" step="0.01" class="form-input" asp-for="precio" value="@Model.precio" />
             </div>
             <div class="field-group">
                 <label>Categoría</label>
-                <select class="form-select">
+                <select class="form-select" asp-for="categoria">
                     <option value="Entrada">Entrada</option>
                     <option value="Fondo" selected>Fondo</option>
                     <option value="Bebida">Bebida</option>
@@ -33,7 +35,7 @@
             </div>
             <div class="field-group">
                 <label>Estado</label>
-                <select class="form-select">
+                <select class="form-select" asp-for="estado">
                     <option value="ACTIVO" selected>ACTIVO</option>
                     <option value="INACTIVO">INACTIVO</option>
                     <option value="AGOTADO">AGOTADO</option>

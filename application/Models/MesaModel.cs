@@ -11,9 +11,7 @@ public class MesaModel
     [Column("id")]
     public int id {get; set;}
 
-    [ForeignKey(nameof(Usuario))]
-    [Column("usuario_id")]
-    public int usuarioId { get; set; }
+
 
     [Required]
     [Column("numero_piso")]
@@ -28,7 +26,5 @@ public class MesaModel
     [Column("estado")]
     public string estado {get; set;} = string.Empty;
 
-    public UsuarioModel Usuario { get; set; } = null!;
 
-    public PedidoModel? Pedido { get; set; }
 }

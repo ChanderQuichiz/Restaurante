@@ -7,12 +7,29 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace application.Migrations
 {
     /// <inheritdoc />
-    public partial class InitalMigration : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "mesas",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    numero_piso = table.Column<int>(type: "int", nullable: false),
+                    capacidad = table.Column<int>(type: "int", nullable: false),
+                    estado = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_mesas", x => x.id);
+                })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
@@ -60,22 +77,29 @@ namespace application.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "mesas",
+                name: "pedidos",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    usuario_id = table.Column<int>(type: "int", nullable: false),
-                    numero_piso = table.Column<int>(type: "int", nullable: false),
-                    capacidad = table.Column<int>(type: "int", nullable: false),
+                    fecha = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    total = table.Column<double>(type: "double", nullable: false),
                     estado = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    usuario_id = table.Column<int>(type: "int", nullable: false),
+                    mesa_id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_mesas", x => x.id);
+                    table.PrimaryKey("PK_pedidos", x => x.id);
                     table.ForeignKey(
-                        name: "FK_mesas_usuarios_usuario_id",
+                        name: "FK_pedidos_mesas_mesa_id",
+                        column: x => x.mesa_id,
+                        principalTable: "mesas",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_pedidos_usuarios_usuario_id",
                         column: x => x.usuario_id,
                         principalTable: "usuarios",
                         principalColumn: "id",
@@ -100,37 +124,6 @@ namespace application.Migrations
                     table.PrimaryKey("PK_solicitudes", x => x.id);
                     table.ForeignKey(
                         name: "FK_solicitudes_usuarios_usuario_id",
-                        column: x => x.usuario_id,
-                        principalTable: "usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "pedidos",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    fecha = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    total = table.Column<double>(type: "double", nullable: false),
-                    estado = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    usuario_id = table.Column<int>(type: "int", nullable: false),
-                    mesa_id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_pedidos", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_pedidos_mesas_mesa_id",
-                        column: x => x.mesa_id,
-                        principalTable: "mesas",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_pedidos_usuarios_usuario_id",
                         column: x => x.usuario_id,
                         principalTable: "usuarios",
                         principalColumn: "id",
@@ -209,11 +202,6 @@ namespace application.Migrations
                 column: "plato_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_mesas_usuario_id",
-                table: "mesas",
-                column: "usuario_id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_pagos_pedido_id",
                 table: "pagos",
                 column: "pedido_id");
@@ -226,8 +214,7 @@ namespace application.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_pedidos_mesa_id",
                 table: "pedidos",
-                column: "mesa_id",
-                unique: true);
+                column: "mesa_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_pedidos_usuario_id",

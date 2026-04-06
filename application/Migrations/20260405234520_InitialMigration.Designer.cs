@@ -12,8 +12,8 @@ using application.Data;
 namespace application.Migrations
 {
     [DbContext(typeof(DbAppContext))]
-    [Migration("20260405003349_InitalMigration")]
-    partial class InitalMigration
+    [Migration("20260405234520_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -81,13 +81,7 @@ namespace application.Migrations
                         .HasColumnType("int")
                         .HasColumnName("numero_piso");
 
-                    b.Property<int>("usuarioId")
-                        .HasColumnType("int")
-                        .HasColumnName("usuario_id");
-
                     b.HasKey("id");
-
-                    b.HasIndex("usuarioId");
 
                     b.ToTable("mesas");
                 });
@@ -163,8 +157,7 @@ namespace application.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("mesaId")
-                        .IsUnique();
+                    b.HasIndex("mesaId");
 
                     b.HasIndex("usuarioId");
 
@@ -302,17 +295,6 @@ namespace application.Migrations
                     b.Navigation("Plato");
                 });
 
-            modelBuilder.Entity("application.Models.MesaModel", b =>
-                {
-                    b.HasOne("application.Models.UsuarioModel", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("usuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
-                });
-
             modelBuilder.Entity("application.Models.PagoModel", b =>
                 {
                     b.HasOne("application.Models.PedidoModel", "Pedido")
@@ -335,8 +317,8 @@ namespace application.Migrations
             modelBuilder.Entity("application.Models.PedidoModel", b =>
                 {
                     b.HasOne("application.Models.MesaModel", "Mesa")
-                        .WithOne("Pedido")
-                        .HasForeignKey("application.Models.PedidoModel", "mesaId")
+                        .WithMany()
+                        .HasForeignKey("mesaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -360,11 +342,6 @@ namespace application.Migrations
                         .IsRequired();
 
                     b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("application.Models.MesaModel", b =>
-                {
-                    b.Navigation("Pedido");
                 });
 #pragma warning restore 612, 618
         }

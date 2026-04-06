@@ -1,3 +1,7 @@
+@model application.Dtos.CrearMesaDto
+@{
+    ViewData["Title"] = "Crear Mesa";
+}
 <div class="content-card form-card">
     <div class="page-top">
         <div class="page-title-wrap">
@@ -6,19 +10,19 @@
         </div>
     </div>
 
-    <form class="form-panel">
+    <form asp-action="Create" method="post" class="form-panel">
         <div class="form-grid">
             <div class="field-group">
                 <label>Capacidad</label>
-                <input type="number" class="form-input" placeholder="Ej: 4, 6, 8" />
+                <input type="number" asp-for="capacidad" class="form-input" placeholder="Ej: 4, 6, 8" />
             </div>
             <div class="field-group">
                 <label>Número de Piso</label>
-                <input type="number" class="form-input" placeholder="Ej: 1, 2, 3" />
+                <input type="number" asp-for="numeroPiso" class="form-input" placeholder="Ej: 1, 2, 3" />
             </div>
             <div class="field-group">
                 <label>Estado</label>
-                <select class="form-select">
+                <select class="form-select" asp-for="estado">
                     <option value="">-- Seleccionar --</option>
                     <option value="LIBRE">LIBRE</option>
                     <option value="OCUPADO">OCUPADO</option>

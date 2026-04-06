@@ -1,4 +1,5 @@
-﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+﻿@model application.Dtos.MesaVM
+
 @{
   ViewData["Title"] = "Mesa";
 }
@@ -53,88 +54,60 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>E2D08A</td>
-                    <td>30</td>
-                    <td>2</td>
-                    <td class="status-occupied">OCUPADO</td>
+                @foreach (var mesa in Model.mesas)
+                {
+                    <tr>
+                        <td>@mesa.id</td>
+                        <td>@mesa.capacidad</td>
+                        <td>@mesa.numeroPiso</td>
+                        <td class="status-occupied">@mesa.estado</td>
                     <td>
                         <div class="action-buttons">
-                            <a href="/Mesa/Edit/1" class="action-btn" title="Editar">
-                                <img src="/assets/editar.png">
+                             <a href="@Url.Action("Edit", "Mesa", new { id = mesa.id })" class="action-btn" title="Editar">  
+                                <img src="/assets/editar.png" alt="Editar">
                             </a>
-                            <form action="/Mesa/Delete/1" method="post" class="inline-form" onsubmit="return confirm('¿Está seguro que desea eliminar esta mesa?');">
-                                <button type="submit" class="action-btn form-delete-btn" title="Eliminar">
-                                    <img src="/assets/eliminar.png">
-                                </button>
-                            </form>
+                            <a href="@Url.Action("Delete", "Mesa", new { id = mesa.id })" class="action-btn form-delete-btn" title="Eliminar">
+                                <img src="/assets/eliminar.png" alt="Eliminar">
+                            </a>
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td>A1F03C</td>
-                    <td>4</td>
-                    <td>1</td>
-                    <td class="status-free">LIBRE</td>
-                    <td>
-                        <div class="action-buttons">
-                            <a href="/Mesa/Edit/2" class="action-btn" title="Editar">
-                                <img src="/assets/editar.png">
-                            </a>
-                            <form action="/Mesa/Delete/2" method="post" class="inline-form" onsubmit="return confirm('¿Está seguro que desea eliminar esta mesa?');">
-                                <button type="submit" class="action-btn form-delete-btn" title="Eliminar">
-                                    <img src="/assets/eliminar.png">
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>B9K12X</td>
-                    <td>6</td>
-                    <td>3</td>
-                    <td class="status-occupied">OCUPADO</td>
-                    <td>
-                        <div class="action-buttons">
-                            <a href="/Mesa/Edit/3" class="action-btn" title="Editar">
-                                <img src="/assets/editar.png">
-                            </a>
-                            <form action="/Mesa/Delete/3" method="post" class="inline-form" onsubmit="return confirm('¿Está seguro que desea eliminar esta mesa?');">
-                                <button type="submit" class="action-btn form-delete-btn" title="Eliminar">
-                                    <img src="/assets/eliminar.png">
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>C4M77Z</td>
-                    <td>8</td>
-                    <td>1</td>
-                    <td>RESERVADO</td>
-                    <td>
-                        <div class="action-buttons">
-                            <a href="/Mesa/Edit/4" class="action-btn" title="Editar">
-                                <img src="/assets/editar.png">
-                            </a>
-                            <form action="/Mesa/Delete/4" method="post" class="inline-form" onsubmit="return confirm('¿Está seguro que desea eliminar esta mesa?');">
-                                <button type="submit" class="action-btn form-delete-btn" title="Eliminar">
-                                    <img src="/assets/eliminar.png">
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
+                }
+
             </tbody>
         </table>
     </div>
 
     <div class="pagination-mock">
-        <div class="page-pill">‹</div>
-        <div class="page-pill active">1</div>
-        <div class="page-pill">2</div>
-        <div class="page-pill">3</div>
-        <div class="page-pill">›</div>
+        @if (Model.page > 1)
+        {
+            <a asp-action="Index" asp-route-page="@(Model.page - 1)" class="page-pill">‹</a>
+        }
+        else
+        {
+            <div class="page-pill">‹</div>
+        }
+
+        @for (int i = 1; i <= Model.totalPages; i++)
+        {
+            if (i == Model.page)
+            {
+                <a asp-action="Index" asp-route-page="@i" class="page-pill active">@i</a>
+            }
+            else
+            {
+                <a asp-action="Index" asp-route-page="@i" class="page-pill">@i</a>
+            }
+        }
+
+        @if (Model.page < Model.totalPages)
+        {
+            <a asp-action="Index" asp-route-page="@(Model.page + 1)" class="page-pill">›</a>
+        }
+        else
+        {
+            <div class="page-pill">›</div>
+        }
     </div>
 </div>
 

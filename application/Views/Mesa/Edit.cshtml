@@ -1,3 +1,7 @@
+@model application.Dtos.MesaDto
+@{
+    ViewData["Title"] = "Editar Mesa";
+}
 <div class="content-card form-card">
     <div class="page-top">
         <div class="page-title-wrap">
@@ -6,19 +10,19 @@
         </div>
     </div>
 
-    <form class="form-panel">
+    <form asp-action="Edit" method="post" class="form-panel">
         <div class="form-grid">
             <div class="field-group">
                 <label>Capacidad</label>
-                <input type="number" class="form-input" value="4" />
+                <input type="number" asp-for="capacidad" value="@Model.capacidad" class="form-input" />
             </div>
             <div class="field-group">
                 <label>Número de Piso</label>
-                <input type="number" class="form-input" value="1" />
+                <input type="number" asp-for="numeroPiso" value="@Model.numeroPiso" class="form-input" />
             </div>
             <div class="field-group">
                 <label>Estado</label>
-                <select class="form-select">
+                <select class="form-select" asp-for="estado">
                     <option value="">-- Seleccionar --</option>
                     <option value="LIBRE" selected>LIBRE</option>
                     <option value="OCUPADO">OCUPADO</option>
