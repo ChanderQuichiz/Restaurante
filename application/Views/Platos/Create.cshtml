@@ -1,50 +1,58 @@
 @model application.Dtos.CrearPlatoDto
 @{
-    ViewData["Title"] = "Nuevo Plato";
+    ViewData["Title"] = "Crear Plato";
 }
 
-<div class="content-card form-card">
-    <div class="page-top">
+<div class="pedidos-form-card">
+    <div class="page-top pedidos-page-top">
         <div class="page-title-wrap">
             <img src="/assets/rombo.png" class="page-mark">
-            <h1 class="page-title">Nuevo Plato</h1>
+            <h1 class="page-title">Crear Plato</h1>
         </div>
     </div>
 
-    <form asp-action="Create" method="post" class="form-panel">
-        <div class="form-grid">
-            <div class="field-group">
-                <label>Nombre</label>
-                <input type="text" class="form-input" placeholder="Ej: Lomo saltado" asp-for="nombre" />
+    <form asp-action="Create" method="post" class="pedidos-form">
+        <div class="pedidos-form-grid">
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Nombre</label>
+                <input type="text" class="pedidos-filter-input" placeholder="Ej: Lomo saltado" asp-for="nombre" />
+                <span asp-validation-for="nombre" class="text-danger"></span>
             </div>
-            <div class="field-group">
-                <label>Precio</label>
-                <input type="number" step="0.01" class="form-input" placeholder="Ej: 24.90" asp-for="precio" />
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Precio</label>
+                <input type="number" step="0.01" class="pedidos-filter-input" placeholder="Ej: 24.90" asp-for="precio" />
+                <span asp-validation-for="precio" class="text-danger"></span>
             </div>
-            <div class="field-group">
-                <label>Categoría</label>
-                <select class="form-select" asp-for="categoria">
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Categoría</label>
+                <select class="pedidos-filter-select" asp-for="categoria">
                     <option value="">-- Seleccionar --</option>
                     <option value="Entrada">Entrada</option>
                     <option value="Fondo">Fondo</option>
                     <option value="Bebida">Bebida</option>
                     <option value="Postre">Postre</option>
                 </select>
+                <span asp-validation-for="categoria" class="text-danger"></span>
             </div>
-            <div class="field-group">
-                <label>Estado</label>
-                <select class="form-select" asp-for="estado">
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Estado</label>
+                <select class="pedidos-filter-select" asp-for="estado">
                     <option value="">-- Seleccionar --</option>
                     <option value="ACTIVO">ACTIVO</option>
                     <option value="INACTIVO">INACTIVO</option>
                     <option value="AGOTADO">AGOTADO</option>
                 </select>
+                <span asp-validation-for="estado" class="text-danger"></span>
             </div>
         </div>
 
-        <div class="form-actions">
-            <button type="submit" class="primary-btn">Guardar</button>
-            <a href="/Platos/Index" class="secondary-btn">Volver</a>
+        <div class="pedidos-filter-actions pedidos-form-actions">
+            <button type="submit" class="pedidos-filter-btn">Guardar</button>
+            <a href="/Platos/Index" class="pedidos-filter-btn pedidos-filter-link-btn pedidos-filter-btn-secondary">Volver</a>
         </div>
     </form>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

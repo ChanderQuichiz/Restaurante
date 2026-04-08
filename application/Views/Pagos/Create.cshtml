@@ -1,42 +1,69 @@
 @model application.Models.PagoModel
+
 @{
-    ViewData["Title"] = "Nuevo Pago";
+    ViewData["Title"] = "Crear Pago";
+    var cajeros = ViewBag.Cajeros as List<application.Models.UsuarioModel>;
+    var pedidos = ViewBag.Pedidos as List<application.Models.PedidoModel>;
 }
 
-<div class="content-card form-card">
-    <div class="page-top">
+<div class="pedidos-form-card">
+    <div class="page-top pedidos-page-top">
         <div class="page-title-wrap">
-            <div class="diamond"></div>
-            <h1 class="page-title">Nuevo Pago</h1>
+            <img src="/assets/rombo.png" class="page-mark">
+            <h1 class="page-title">Crear Pago</h1>
         </div>
     </div>
 
-    <form asp-action="Create" method="post" class="form-panel">
-        @Html.AntiForgeryToken()
-        <div class="form-grid">
-            <div class="field-group">
-                <label asp-for="pedidoId">Pedido ID</label>
-                <input asp-for="pedidoId" class="form-input" />
+    <form asp-action="Create" method="post" class="pedidos-form">
+        <div class="pedidos-form-grid">
+            <div class="pedidos-form-field">
+                <label asp-for="pedidoId" class="pedidos-filter-label">Pedido</label>
+                <select asp-for="pedidoId" class="pedidos-filter-select">
+                    <option value="">-- Seleccionar --</option>
+                    @if (pedidos != null)
+                    {
+                        @foreach (var p in pedidos)
+                        {
+                            <option value="@p.id">P-@p.id.ToString("000") (DNI: @p.dniCliente)</option>
+                        }
+                    }
+                </select>
                 <span asp-validation-for="pedidoId" class="text-danger"></span>
             </div>
-            <div class="field-group">
-                <label asp-for="usuarioId">Usuario ID</label>
-                <input asp-for="usuarioId" class="form-input" />
+
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">DNI Cliente</label>
+                <div class="pedidos-input-with-btn">
+                    <input type="text" name="dniCliente" class="pedidos-filter-input pedidos-input-with-btn-control" placeholder="Ej: 72599882" />
+                    <button type="button" class="pedidos-input-inline-btn">Buscar</button>
+                </div>
+            </div>
+
+            <div class="pedidos-form-field">
+                <label asp-for="usuarioId" class="pedidos-filter-label">Cajero</label>
+                <select asp-for="usuarioId" class="pedidos-filter-select">
+                    <option value="">-- Seleccionar --</option>
+                    @if (cajeros != null)
+                    {
+                        @foreach (var c in cajeros)
+                        {
+                            <option value="@c.id">@c.nombre</option>
+                        }
+                    }
+                </select>
                 <span asp-validation-for="usuarioId" class="text-danger"></span>
             </div>
-            <div class="field-group">
-                <label asp-for="monto">Monto</label>
-                <input asp-for="monto" type="number" step="0.01" class="form-input" />
+
+            <div class="pedidos-form-field">
+                <label asp-for="monto" class="pedidos-filter-label">Monto</label>
+                <input asp-for="monto" type="number" step="0.01" class="pedidos-filter-input" />
                 <span asp-validation-for="monto" class="text-danger"></span>
             </div>
-            <div class="field-group">
-                <label asp-for="fecha">Fecha</label>
-                <input asp-for="fecha" type="date" class="form-input" />
-                <span asp-validation-for="fecha" class="text-danger"></span>
-            </div>
-            <div class="field-group">
-                <label asp-for="metodoPago">Método</label>
-                <select asp-for="metodoPago" class="form-select">
+
+            <div class="pedidos-form-field">
+                <label asp-for="metodoPago" class="pedidos-filter-label">Método</label>
+                <select asp-for="metodoPago" class="pedidos-filter-select">
+                    <option value="">-- Seleccionar --</option>
                     <option value="Efectivo">Efectivo</option>
                     <option value="Tarjeta">Tarjeta</option>
                     <option value="Transferencia">Transferencia</option>
@@ -45,9 +72,13 @@
             </div>
         </div>
 
-        <div class="form-actions">
-            <button type="submit" class="primary-btn">Guardar</button>
-            <a asp-action="Index" class="secondary-btn">Volver</a>
+        <div class="pedidos-filter-actions pedidos-form-actions">
+            <button type="submit" class="pedidos-filter-btn">Pagar</button>
+            <a asp-action="Index" class="pedidos-filter-btn pedidos-filter-link-btn pedidos-filter-btn-secondary">Volver</a>
         </div>
     </form>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

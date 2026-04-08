@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace application.Dtos;
 
-public record class CrearPlatoDto(
+public record CrearPlatoDto(
    [Required] string nombre,
    [Required] double precio,
    [Required] string categoria,

@@ -1,95 +1,106 @@
-@model List<application.Models.PedidoModel>
+@model List<application.Dtos.PedidoDto>
+
 @{
-    ViewData["Title"] = "Pedidos";
+    ViewData["Title"] = "Gestión de Pedidos";
+
+    var buscar = Context.Request.Query["buscar"].ToString();
+    var estadoSeleccionado = Context.Request.Query["estado"].ToString();
+    var fechaSeleccionada = Context.Request.Query["fecha"].ToString();
 }
 
-<div class="content-card">
-    <div class="page-top">
-        <div class="page-title-wrap">
-            <div class="diamond"></div>
-            <h1 class="page-title">Gestión de Pedidos</h1>
-        </div>
-        <a asp-action="Create" class="primary-btn">Nuevo Pedido</a>
+<div class="page-top pedidos-page-top">
+    <div class="page-title-wrap">
+        <img src="/assets/rombo.png" class="page-mark">
+        <h1 class="page-title">Gestión de Pedidos</h1>
     </div>
+</div>
 
-    <form method="get" class="filters-grid">
-        <div class="filter-box">
-            <label>Buscar</label>
-            <input type="text" name="buscar" class="input-pill" value="@Context.Request.Query["buscar"]" placeholder="Buscar por id o estado" />
+<form method="get" asp-action="Index">
+    <div class="pedidos-filters-row">
+        <div class="pedidos-filter-item pedidos-filter-buscar">
+            <label class="pedidos-filter-label">Buscar</label>
+            <input type="text"
+                   name="buscar"
+                   value="@buscar"
+                   placeholder="Buscar por DNI"
+                   class="pedidos-filter-input" />
         </div>
-        <div class="filter-box">
-            <label>Estado</label>
-            <select class="select-pill" name="buscar">
-                <option value="">Todos</option>
-                <option value="Pendiente">Pendiente</option>
-                <option value="En proceso">En proceso</option>
-                <option value="Entregado">Entregado</option>
+        <div class="pedidos-filter-item pedidos-filter-estado">
+            <label class="pedidos-filter-label">Estado</label>
+            <select name="estado"
+                    class="pedidos-filter-select">
+                <option value="" selected="@(string.IsNullOrEmpty(estadoSeleccionado))">Todos</option>
+                <option value="Pendiente" selected="@(estadoSeleccionado == "Pendiente")">Pendiente</option>
+                <option value="En proceso" selected="@(estadoSeleccionado == "En proceso")">En proceso</option>
+                <option value="Entregado" selected="@(estadoSeleccionado == "Entregado")">Entregado</option>
             </select>
         </div>
-        <div class="filter-box">
-            <label>Fecha</label>
-            <input type="date" class="input-pill" name="fecha" />
+        <div class="pedidos-filter-item pedidos-filter-fecha">
+            <label class="pedidos-filter-label">Fecha</label>
+            <input type="date"
+                   name="fecha"
+                   value="@fechaSeleccionada"
+                   class="pedidos-filter-input" />
         </div>
-        <div class="filter-box">
-            <label>Acción</label>
-            <button type="submit" class="primary-btn filter-submit-btn">Filtrar</button>
-        </div>
-    </form>
+        <div class="pedidos-filter-actions">
+            <button type="submit" class="pedidos-filter-btn">
+                Filtrar
+            </button>
 
-    <div class="table-wrap">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Usuario</th>
-                    <th>Fecha</th>
-                    <th>Total</th>
-                    <th>Estado</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model.Any())
-                {
-                    @foreach (var item in Model)
-                    {
-                                                var statusClass = item.estado == "Entregado" ? "status-green" : item.estado == "En proceso" ? "status-yellow" : "status-red";
-                        <tr>
-                                                        <td>P-@item.id.ToString("000")</td>
-                                                        <td>USR-@item.usuarioId.ToString("000")</td>
-                                                        <td>@item.fecha.ToString("dd/MM/yyyy")</td>
-                                                        <td>S/ @item.total.ToString("0.00")</td>
-                                                        <td class="@statusClass">@item.estado</td>
-                            <td>
-                              <div class="action-buttons">
-                                                                                                                                <a href="/Pedidos/Edit/@item.id" class="action-btn" title="Editar">
-                                  <img src="/assets/editar.png">
-                                </a>
-                                                                                                                                <form action="/Pedidos/Delete/@item.id" method="post" class="inline-form" onsubmit="return confirm('¿Está seguro que desea eliminar este pedido?');">
-                                                                    <button type="submit" class="action-btn form-delete-btn" title="Eliminar">
-                                    <img src="/assets/eliminar.png">
-                                  </button>
-                                </form>
-                              </div>
-                            </td>
-                        </tr>
-                    }
-                }
-                else
+            <a asp-action="Create" class="pedidos-filter-btn pedidos-filter-link-btn">
+                Nuevo Pedido
+            </a>
+        </div>
+    </div>
+</form>
+<div class="pedidos-table-card">
+
+    <table class="pedidos-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Mesero</th>
+                <th>DNI Cliente</th>
+                <th>Mesa</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
                 {
                     <tr>
-                        <td colspan="6" class="empty-box">No se encontraron pedidos.</td>
+                        <td>@item.id</td>
+                        <td>@item.meseroNombre</td>
+                        <td>@item.dniCliente</td>
+                        <td>Mesa @item.mesaId</td>
+                        <td>@item.estado</td>
+                        <td>
+                            @item.fecha.ToString("dd/MM/yyyy HH:mm")
+                        </td>
+                        <td>
+                            S/ @item.total.ToString("0.00")
+                        </td>
+                        <td>
+                            <button type="button" class="pedidos-table-detail-btn">Detalle</button>
+                        </td>
                     </tr>
                 }
-            </tbody>
-        </table>
-    </div>
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8" class="pedidos-empty">
+                        No se encontraron pedidos.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-    <div class="pagination-mock">
-        <div class="page-pill">‹</div>
-        <div class="page-pill active">1</div>
-        <div class="page-pill">2</div>
-        <div class="page-pill">3</div>
-        <div class="page-pill">›</div>
-    </div>
 </div>

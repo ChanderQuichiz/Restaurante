@@ -1,91 +1,111 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using application.Data;
 using application.Models;
 
 namespace application.Controllers
 {
     public class PagosController : Controller
     {
-        private static readonly List<PagoModel> ListaPagos = new()
+        private readonly DbAppContext _context;
+
+        public PagosController(DbAppContext context)
         {
-            new PagoModel { id = 1, pedidoId = 1, monto = 120.50, fecha = DateTime.Today, metodoPago = "Efectivo", usuarioId = 1 }
-        };
-
-        public IActionResult Index(string buscar)
-        {
-            var pagos = ListaPagos.AsEnumerable();
-
-            if (!string.IsNullOrWhiteSpace(buscar) && int.TryParse(buscar, out int pedidoId))
-            {
-                pagos = pagos.Where(p => p.pedidoId == pedidoId);
-            }
-
-            return View(pagos.OrderByDescending(p => p.id).ToList());
+            _context = context;
         }
 
-        public IActionResult Create()
+        // LISTADO + FILTROS
+        public IActionResult Index(string buscar, string metodo, DateTime? fecha)
         {
-            return View(new PagoModel { fecha = DateTime.Today, metodoPago = "Efectivo", usuarioId = 1, pedidoId = 1, monto = 0.01 });
-        }
+            var pagos = _context.Pagos
+                .Include(p => p.Pedido)
+                .Include(p => p.Usuario)
+                .AsQueryable();
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(PagoModel pago)
-        {
-            if (!ModelState.IsValid)
+            if (!string.IsNullOrWhiteSpace(buscar))
             {
-                return View(pago);
+                var txt = buscar.Trim();
+                pagos = pagos.Where(p => p.pedidoId.ToString().Contains(txt));
             }
 
-            pago.id = ListaPagos.Any() ? ListaPagos.Max(p => p.id) + 1 : 1;
-            ListaPagos.Add(pago);
-            return RedirectToAction(nameof(Index));
+            if (!string.IsNullOrWhiteSpace(metodo))
+            {
+                pagos = pagos.Where(p => p.metodoPago == metodo);
+            }
+
+            if (fecha.HasValue)
+            {
+                var f = fecha.Value.Date;
+                pagos = pagos.Where(p => p.fecha.Date == f);
+            }
+
+            return View(pagos
+                .OrderByDescending(p => p.id)
+                .ToList());
         }
 
-        public IActionResult Edit(int id)
+        // FORMULARIO CREAR
+        public IActionResult Create(int pedidoId)
         {
-            var pago = ListaPagos.FirstOrDefault(p => p.id == id);
-            if (pago == null)
+            CargarCajeros();
+            CargarPedidos();
+
+            var pago = new PagoModel
             {
-                return NotFound();
-            }
+                pedidoId = pedidoId,
+                fecha = DateTime.Now
+            };
 
             return View(pago);
         }
 
+        // GUARDAR PAGO
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Edit(PagoModel pago)
+        public IActionResult Create(PagoModel pago)
         {
             if (!ModelState.IsValid)
             {
+                CargarCajeros();
+                CargarPedidos();
                 return View(pago);
             }
 
-            var pagoExistente = ListaPagos.FirstOrDefault(p => p.id == pago.id);
-            if (pagoExistente == null)
+            if (pago.fecha == default)
             {
-                return NotFound();
+                pago.fecha = DateTime.Now;
             }
 
-            pagoExistente.pedidoId = pago.pedidoId;
-            pagoExistente.monto = pago.monto;
-            pagoExistente.fecha = pago.fecha;
-            pagoExistente.metodoPago = pago.metodoPago;
-            pagoExistente.usuarioId = pago.usuarioId;
+            _context.Pagos.Add(pago);
+            _context.SaveChanges();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        public IActionResult Delete(int id)
+        private void CargarCajeros()
         {
-            var pago = ListaPagos.FirstOrDefault(p => p.id == id);
-            if (pago != null)
+            List<UsuarioModel> cajeros = _context.Usuarios
+                .Where(u => u.estado == "Activo" && u.rol == "Cajero")
+                .OrderBy(u => u.nombre)
+                .ToList();
+
+            if (cajeros.Count == 0)
             {
-                ListaPagos.Remove(pago);
+                cajeros = _context.Usuarios
+                    .Where(u => u.estado == "Activo")
+                    .OrderBy(u => u.nombre)
+                    .ToList();
             }
 
-            return RedirectToAction(nameof(Index));
+            ViewBag.Cajeros = cajeros;
+        }
+
+        private void CargarPedidos()
+        {
+            List<PedidoModel> pedidos = _context.Pedidos
+                .OrderByDescending(p => p.id)
+                .ToList();
+
+            ViewBag.Pedidos = pedidos;
         }
     }
 }

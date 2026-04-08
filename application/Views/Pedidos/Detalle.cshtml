@@ -1,0 +1,31 @@
+@model application.Dtos.PedidoDetalleVM
+
+<h2>Detalle del Pedido</h2>
+
+<p><strong>ID Pedido:</strong> P-@Model.Pedido.id.ToString("000")</p>
+<p><strong>Usuario:</strong> @Model.UsuarioNombre</p>
+<p><strong>Fecha:</strong> @Model.Pedido.fecha.ToString("dd/MM/yyyy")</p>
+<p><strong>Estado:</strong> @Model.Pedido.estado</p>
+<p><strong>Total:</strong> S/ @Model.Pedido.total.ToString("0.00")</p>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Plato</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Detalles)
+        {
+            <tr>
+                <td>@item.platoNombre</td>
+                <td>@item.cantidad</td>
+                <td>S/ @item.precioUnitario.ToString("0.00")</td>
+                <td>S/ @((item.cantidad * item.precioUnitario).ToString("0.00"))</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -5,46 +5,50 @@
 }
 
 <div class="content-card">
-    <div class="page-top">
+    <div class="page-top pedidos-page-top">
         <div class="page-title-wrap">
             <img src="/assets/rombo.png" class="page-mark">
             <h1 class="page-title">Gestión de Platos</h1>
         </div>
-        <a href="/Platos/Create" class="primary-btn">Nuevo plato</a>
     </div>
 
-    <form method="get" class="filters-grid">
-        <div class="filter-box">
-            <label>Buscar</label>
-            <input type="text" name="buscar" class="input-pill" placeholder="Buscar por nombre" />
-        </div>
-        <div class="filter-box">
-            <label>Categoría</label>
-            <select class="select-pill" name="categoria">
-                <option>Todos</option>
-                <option>Entrada</option>
-                <option>Fondo</option>
-                <option>Bebida</option>
-                <option>Postre</option>
-            </select>
-        </div>
-        <div class="filter-box">
-            <label>Estado</label>
-            <select class="select-pill" name="estado">
-                <option>Todos</option>
-                <option>ACTIVO</option>
-                <option>INACTIVO</option>
-                <option>AGOTADO</option>
-            </select>
-        </div>
-        <div class="filter-box">
-            <label>Acción</label>
-            <button type="submit" class="primary-btn filter-submit-btn">Filtrar</button>
+    <form method="get">
+        <div class="pedidos-filters-row">
+            <div class="pedidos-filter-item pedidos-filter-buscar">
+                <label class="pedidos-filter-label">Buscar</label>
+                <input type="text" name="buscar" class="pedidos-filter-input" placeholder="Buscar por nombre" />
+            </div>
+
+            <div class="pedidos-filter-item pedidos-filter-estado">
+                <label class="pedidos-filter-label">Categoría</label>
+                <select class="pedidos-filter-select" name="categoria">
+                    <option>Todos</option>
+                    <option>Entrada</option>
+                    <option>Fondo</option>
+                    <option>Bebida</option>
+                    <option>Postre</option>
+                </select>
+            </div>
+
+            <div class="pedidos-filter-item pedidos-filter-estado">
+                <label class="pedidos-filter-label">Estado</label>
+                <select class="pedidos-filter-select" name="estado">
+                    <option>Todos</option>
+                    <option>ACTIVO</option>
+                    <option>INACTIVO</option>
+                    <option>AGOTADO</option>
+                </select>
+            </div>
+
+            <div class="pedidos-filter-actions">
+                <button type="submit" class="pedidos-filter-btn">Filtrar</button>
+                <a href="/Platos/Create" class="pedidos-filter-btn pedidos-filter-link-btn">Nuevo plato</a>
+            </div>
         </div>
     </form>
 
-    <div class="table-wrap">
-        <table class="data-table">
+    <div class="pedidos-table-card">
+        <table class="pedidos-table">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -65,14 +69,12 @@
                     <td class="status-green">@plato.estado</td>
                     <td>
                         <div class="action-buttons">
-                              <div class="action-buttons">
                             <a href="@Url.Action("Edit", "Platos", new { id = plato.id })" class="action-btn" title="Editar">  
                                 <img src="/assets/editar.png" alt="Editar">
                             </a>
                             <a href="@Url.Action("Delete", "Platos", new { id = plato.id })" class="action-btn form-delete-btn" title="Eliminar">
                                 <img src="/assets/eliminar.png" alt="Eliminar">
                             </a>
-                        
                         </div>
                     </td>
                 </tr>

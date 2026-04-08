@@ -17,7 +17,7 @@ namespace application.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.14")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
@@ -97,8 +97,7 @@ namespace application.Migrations
 
                     b.Property<string>("metodoPago")
                         .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("varchar(40)")
+                        .HasColumnType("longtext")
                         .HasColumnName("metodo_pago");
 
                     b.Property<double>("monto")
@@ -130,10 +129,14 @@ namespace application.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<string>("dniCliente")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("dni_cliente");
+
                     b.Property<string>("estado")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("varchar(30)")
+                        .HasColumnType("longtext")
                         .HasColumnName("estado");
 
                     b.Property<DateTime>("fecha")
@@ -144,19 +147,19 @@ namespace application.Migrations
                         .HasColumnType("int")
                         .HasColumnName("mesa_id");
 
+                    b.Property<int>("meseroId")
+                        .HasColumnType("int")
+                        .HasColumnName("usuario_id");
+
                     b.Property<double>("total")
                         .HasColumnType("double")
                         .HasColumnName("total");
-
-                    b.Property<int>("usuarioId")
-                        .HasColumnType("int")
-                        .HasColumnName("usuario_id");
 
                     b.HasKey("id");
 
                     b.HasIndex("mesaId");
 
-                    b.HasIndex("usuarioId");
+                    b.HasIndex("meseroId");
 
                     b.ToTable("pedidos");
                 });
@@ -236,20 +239,21 @@ namespace application.Migrations
 
                     b.Property<string>("contrasena")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
+                        .HasColumnType("longtext")
                         .HasColumnName("contrasena");
+
+                    b.Property<string>("dni")
+                        .HasColumnType("longtext")
+                        .HasColumnName("dni");
 
                     b.Property<string>("email")
                         .IsRequired()
-                        .HasMaxLength(180)
-                        .HasColumnType("varchar(180)")
+                        .HasColumnType("longtext")
                         .HasColumnName("email");
 
                     b.Property<string>("estado")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("varchar(30)")
+                        .HasColumnType("longtext")
                         .HasColumnName("estado");
 
                     b.Property<DateTime>("fechaExpiracion")
@@ -258,14 +262,12 @@ namespace application.Migrations
 
                     b.Property<string>("nombre")
                         .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("varchar(120)")
+                        .HasColumnType("longtext")
                         .HasColumnName("nombre");
 
                     b.Property<string>("rol")
                         .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("varchar(40)")
+                        .HasColumnType("longtext")
                         .HasColumnName("rol");
 
                     b.HasKey("id");
@@ -276,7 +278,7 @@ namespace application.Migrations
             modelBuilder.Entity("application.Models.DetallePedidoModel", b =>
                 {
                     b.HasOne("application.Models.PedidoModel", "Pedido")
-                        .WithMany()
+                        .WithMany("Detalles")
                         .HasForeignKey("pedidoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -319,15 +321,15 @@ namespace application.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("application.Models.UsuarioModel", "Usuario")
+                    b.HasOne("application.Models.UsuarioModel", "Mesero")
                         .WithMany()
-                        .HasForeignKey("usuarioId")
+                        .HasForeignKey("meseroId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Mesa");
 
-                    b.Navigation("Usuario");
+                    b.Navigation("Mesero");
                 });
 
             modelBuilder.Entity("application.Models.SolicitudModel", b =>
@@ -339,6 +341,11 @@ namespace application.Migrations
                         .IsRequired();
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("application.Models.PedidoModel", b =>
+                {
+                    b.Navigation("Detalles");
                 });
 #pragma warning restore 612, 618
         }

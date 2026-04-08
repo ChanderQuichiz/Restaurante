@@ -2,38 +2,46 @@
 @{
     ViewData["Title"] = "Editar Mesa";
 }
-<div class="content-card form-card">
-    <div class="page-top">
+<div class="pedidos-form-card">
+    <div class="page-top pedidos-page-top">
         <div class="page-title-wrap">
             <img src="/assets/rombo.png" class="page-mark">
             <h1 class="page-title">Editar Mesa</h1>
         </div>
     </div>
 
-    <form asp-action="Edit" method="post" class="form-panel">
-        <div class="form-grid">
-            <div class="field-group">
-                <label>Capacidad</label>
-                <input type="number" asp-for="capacidad" value="@Model.capacidad" class="form-input" />
+    <form asp-action="Edit" method="post" class="pedidos-form">
+        <input type="hidden" asp-for="id" />
+        <div class="pedidos-form-grid">
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Capacidad</label>
+                <input type="number" asp-for="capacidad" value="@Model.capacidad" class="pedidos-filter-input" />
+                <span asp-validation-for="capacidad" class="text-danger"></span>
             </div>
-            <div class="field-group">
-                <label>Número de Piso</label>
-                <input type="number" asp-for="numeroPiso" value="@Model.numeroPiso" class="form-input" />
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Número de Piso</label>
+                <input type="number" asp-for="numeroPiso" value="@Model.numeroPiso" class="pedidos-filter-input" />
+                <span asp-validation-for="numeroPiso" class="text-danger"></span>
             </div>
-            <div class="field-group">
-                <label>Estado</label>
-                <select class="form-select" asp-for="estado">
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Estado</label>
+                <select class="pedidos-filter-select" asp-for="estado">
                     <option value="">-- Seleccionar --</option>
                     <option value="LIBRE" selected>LIBRE</option>
                     <option value="OCUPADO">OCUPADO</option>
                     <option value="RESERVADO">RESERVADO</option>
                 </select>
+                <span asp-validation-for="estado" class="text-danger"></span>
             </div>
         </div>
 
-        <div class="form-actions">
-            <button type="submit" class="primary-btn">Actualizar</button>
-            <a href="/Mesa/Index" class="secondary-btn">Volver</a>
+        <div class="pedidos-filter-actions pedidos-form-actions">
+            <button type="submit" class="pedidos-filter-btn">Actualizar</button>
+            <a href="/Mesa/Index" class="pedidos-filter-btn pedidos-filter-link-btn pedidos-filter-btn-secondary">Volver</a>
         </div>
     </form>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
