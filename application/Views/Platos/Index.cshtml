@@ -16,27 +16,42 @@
         <div class="pedidos-filters-row">
             <div class="pedidos-filter-item pedidos-filter-buscar">
                 <label class="pedidos-filter-label">Buscar</label>
-                <input type="text" name="buscar" class="pedidos-filter-input" placeholder="Buscar por nombre" />
+                <input type="text" name="buscar" value="@(Model.filtros.buscar ?? string.Empty)" class="pedidos-filter-input" placeholder="Buscar por nombre" />
             </div>
 
             <div class="pedidos-filter-item pedidos-filter-estado">
                 <label class="pedidos-filter-label">Categoría</label>
                 <select class="pedidos-filter-select" name="categoria">
-                    <option>Todos</option>
-                    <option>Entrada</option>
-                    <option>Fondo</option>
-                    <option>Bebida</option>
-                    <option>Postre</option>
+                    <option value="">Todos</option>
+                    @foreach (var categoria in Enum.GetValues<CategoriaPlatoEnum>())
+                    {
+                        if (Model.filtros.categoria == categoria)
+                        {
+                            <option value="@categoria" selected>@categoria</option>
+                        }
+                        else
+                        {
+                            <option value="@categoria">@categoria</option>
+                        }
+                    }
                 </select>
             </div>
 
             <div class="pedidos-filter-item pedidos-filter-estado">
                 <label class="pedidos-filter-label">Estado</label>
                 <select class="pedidos-filter-select" name="estado">
-                    <option>Todos</option>
-                    <option>ACTIVO</option>
-                    <option>INACTIVO</option>
-                    <option>AGOTADO</option>
+                    <option value="">Todos</option>
+                    @foreach (var estado in Enum.GetValues<EstadoPlatoEnum>())
+                    {
+                        if (Model.filtros.estado == estado)
+                        {
+                            <option value="@estado" selected>@estado</option>
+                        }
+                        else
+                        {
+                            <option value="@estado">@estado</option>
+                        }
+                    }
                 </select>
             </div>
 
@@ -88,7 +103,12 @@
     <div class="pagination-mock">
         @if (Model.page > 1)
         {
-            <a asp-action="Index" asp-route-page="@(Model.page - 1)" class="page-pill">‹</a>
+            <a asp-action="Index"
+               asp-route-page="@(Model.page - 1)"
+               asp-route-buscar="@(Model.filtros.buscar ?? string.Empty)"
+               asp-route-categoria="@(Model.filtros.categoria?.ToString() ?? string.Empty)"
+               asp-route-estado="@(Model.filtros.estado?.ToString() ?? string.Empty)"
+               class="page-pill">‹</a>
         }
         else
         {
@@ -99,17 +119,32 @@
         {
             if (i == Model.page)
             {
-                <a asp-action="Index" asp-route-page="@i" class="page-pill active">@i</a>
+                <a asp-action="Index"
+                   asp-route-page="@i"
+                   asp-route-buscar="@(Model.filtros.buscar ?? string.Empty)"
+                   asp-route-categoria="@(Model.filtros.categoria?.ToString() ?? string.Empty)"
+                   asp-route-estado="@(Model.filtros.estado?.ToString() ?? string.Empty)"
+                   class="page-pill active">@i</a>
             }
             else
             {
-                <a asp-action="Index" asp-route-page="@i" class="page-pill">@i</a>
+                <a asp-action="Index"
+                   asp-route-page="@i"
+                   asp-route-buscar="@(Model.filtros.buscar ?? string.Empty)"
+                   asp-route-categoria="@(Model.filtros.categoria?.ToString() ?? string.Empty)"
+                   asp-route-estado="@(Model.filtros.estado?.ToString() ?? string.Empty)"
+                   class="page-pill">@i</a>
             }
         }
 
         @if (Model.page < Model.totalPages)
         {
-            <a asp-action="Index" asp-route-page="@(Model.page + 1)" class="page-pill">›</a>
+            <a asp-action="Index"
+               asp-route-page="@(Model.page + 1)"
+               asp-route-buscar="@(Model.filtros.buscar ?? string.Empty)"
+               asp-route-categoria="@(Model.filtros.categoria?.ToString() ?? string.Empty)"
+               asp-route-estado="@(Model.filtros.estado?.ToString() ?? string.Empty)"
+               class="page-pill">›</a>
         }
         else
         {

@@ -1,5 +1,6 @@
 using System;
 using application.Dtos;
+using application.Enums;
 using application.Models;
 
 namespace application.Utils;
@@ -14,7 +15,7 @@ public class PedidoMapper
             mesaId: model.mesaId,
             fecha: model.fecha,
             total: model.total,
-            estado: model.estado,
+            estado: mapearEstadoPedido(model.estado),
             dniCliente: model.dniCliente,
             meseroNombre: model.Mesero != null ? model.Mesero.nombre : string.Empty
         );
@@ -27,7 +28,7 @@ public class PedidoMapper
             meseroId = crearPedidoDto.meseroId,
             dniCliente = crearPedidoDto.dniCliente,
             mesaId = crearPedidoDto.mesaId,
-            estado = crearPedidoDto.estado
+            estado = mapearEstadoPedidoTexto(crearPedidoDto.estado)
         };
     }
 
@@ -41,5 +42,27 @@ public class PedidoMapper
             precioUnitario: model.precioUnitario,
             platoNombre:model.Plato.nombre 
         );
+    }
+
+    private static EstadoPedidoEnum mapearEstadoPedido(string estado)
+    {
+        return estado switch
+        {
+            "Pendiente" => EstadoPedidoEnum.Pendiente,
+            "En proceso" => EstadoPedidoEnum.EnProceso,
+            "Entregado" => EstadoPedidoEnum.Entregado,
+            _ => EstadoPedidoEnum.Pendiente
+        };
+    }
+
+    private static string mapearEstadoPedidoTexto(EstadoPedidoEnum estado)
+    {
+        return estado switch
+        {
+            EstadoPedidoEnum.Pendiente => "Pendiente",
+            EstadoPedidoEnum.EnProceso => "En proceso",
+            EstadoPedidoEnum.Entregado => "Entregado",
+            _ => "Pendiente"
+        };
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using application.Dtos;
+using application.Enums;
 using application.Models;
 
 namespace application.Utils;
@@ -12,7 +13,9 @@ public class MesaMapper
             id: model.id,
             numeroPiso: model.numeroPiso,
             capacidad: model.capacidad,
-            estado: model.estado
+            estado: Enum.TryParse<EstadoMesaEnum>(model.estado, true, out var estado)
+                ? estado
+                : EstadoMesaEnum.LIBRE
         );
     }
     public static MesaModel ToMesaModel(CrearMesaDto crearMesaDto)
@@ -22,7 +25,7 @@ public class MesaMapper
             
             numeroPiso = crearMesaDto.numeroPiso,
             capacidad = crearMesaDto.capacidad,
-            estado = crearMesaDto.estado
+            estado = crearMesaDto.estado.ToString()
         };
     }
 }

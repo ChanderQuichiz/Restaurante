@@ -29,19 +29,34 @@
             <div class="pedidos-form-field">
                 <label class="pedidos-filter-label">Categoría</label>
                 <select class="pedidos-filter-select" asp-for="categoria">
-                    <option value="Entrada">Entrada</option>
-                    <option value="Fondo" selected>Fondo</option>
-                    <option value="Bebida">Bebida</option>
-                    <option value="Postre">Postre</option>
+                    @foreach (var categoria in Enum.GetValues<CategoriaPlatoEnum>())
+                    {
+                        if (categoria == Model.categoria)
+                        {
+                            <option value="@categoria" selected>@categoria</option>
+                        }
+                        else
+                        {
+                            <option value="@categoria">@categoria</option>
+                        }
+                    }
                 </select>
                 <span asp-validation-for="categoria" class="text-danger"></span>
             </div>
             <div class="pedidos-form-field">
                 <label class="pedidos-filter-label">Estado</label>
                 <select class="pedidos-filter-select" asp-for="estado">
-                    <option value="ACTIVO" selected>ACTIVO</option>
-                    <option value="INACTIVO">INACTIVO</option>
-                    <option value="AGOTADO">AGOTADO</option>
+                    @foreach (var estado in Enum.GetValues<EstadoPlatoEnum>())
+                    {
+                        if (estado == Model.estado)
+                        {
+                            <option value="@estado" selected>@estado</option>
+                        }
+                        else
+                        {
+                            <option value="@estado">@estado</option>
+                        }
+                    }
                 </select>
                 <span asp-validation-for="estado" class="text-danger"></span>
             </div>

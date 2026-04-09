@@ -1,7 +1,7 @@
 ﻿@model application.Dtos.MesaVM
 
 @{
-  ViewData["Title"] = "Mesa";
+    ViewData["Title"] = "Mesa";
 }
 
 <div class="content-card">
@@ -16,26 +16,42 @@
         <div class="pedidos-filters-row">
             <div class="pedidos-filter-item pedidos-filter-buscar">
                 <label class="pedidos-filter-label">Buscar</label>
-                <input type="text" name="buscar" class="pedidos-filter-input" placeholder="Buscar por código" />
+                <input type="text" name="codigo" value="@(Model.filtros.codigo?.ToString() ?? string.Empty)" class="pedidos-filter-input" placeholder="Buscar por código" />
             </div>
 
             <div class="pedidos-filter-item pedidos-filter-estado">
                 <label class="pedidos-filter-label">Piso</label>
                 <select class="pedidos-filter-select" name="piso">
-                    <option>Todos</option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
+                    <option value="">Todos</option>
+                    @foreach (var piso in Enum.GetValues<PisoMesaEnum>())
+                    {
+                        if (Model.filtros.piso == piso)
+                        {
+                            <option value="@((int)piso)" selected>@((int)piso)</option>
+                        }
+                        else
+                        {
+                            <option value="@((int)piso)">@((int)piso)</option>
+                        }
+                    }
                 </select>
             </div>
 
             <div class="pedidos-filter-item pedidos-filter-estado">
                 <label class="pedidos-filter-label">Estado</label>
                 <select class="pedidos-filter-select" name="estado">
-                    <option>Todos</option>
-                    <option>LIBRE</option>
-                    <option>OCUPADO</option>
-                    <option>RESERVADO</option>
+                    <option value="">Todos</option>
+                    @foreach (var estado in Enum.GetValues<EstadoMesaEnum>())
+                    {
+                        if (Model.filtros.estado == estado)
+                        {
+                            <option value="@estado" selected>@estado</option>
+                        }
+                        else
+                        {
+                            <option value="@estado">@estado</option>
+                        }
+                    }
                 </select>
             </div>
 
@@ -85,7 +101,12 @@
     <div class="pagination-mock">
         @if (Model.page > 1)
         {
-            <a asp-action="Index" asp-route-page="@(Model.page - 1)" class="page-pill">‹</a>
+            <a asp-action="Index"
+               asp-route-page="@(Model.page - 1)"
+                asp-route-codigo="@(Model.filtros.codigo?.ToString() ?? string.Empty)"
+                asp-route-piso="@(Model.filtros.piso.HasValue ? ((int)Model.filtros.piso.Value).ToString() : string.Empty)"
+                asp-route-estado="@(Model.filtros.estado?.ToString() ?? string.Empty)"
+               class="page-pill">‹</a>
         }
         else
         {
@@ -96,17 +117,32 @@
         {
             if (i == Model.page)
             {
-                <a asp-action="Index" asp-route-page="@i" class="page-pill active">@i</a>
+                <a asp-action="Index"
+                   asp-route-page="@i"
+                     asp-route-codigo="@(Model.filtros.codigo?.ToString() ?? string.Empty)"
+                     asp-route-piso="@(Model.filtros.piso.HasValue ? ((int)Model.filtros.piso.Value).ToString() : string.Empty)"
+                     asp-route-estado="@(Model.filtros.estado?.ToString() ?? string.Empty)"
+                   class="page-pill active">@i</a>
             }
             else
             {
-                <a asp-action="Index" asp-route-page="@i" class="page-pill">@i</a>
+                <a asp-action="Index"
+                   asp-route-page="@i"
+                     asp-route-codigo="@(Model.filtros.codigo?.ToString() ?? string.Empty)"
+                     asp-route-piso="@(Model.filtros.piso.HasValue ? ((int)Model.filtros.piso.Value).ToString() : string.Empty)"
+                     asp-route-estado="@(Model.filtros.estado?.ToString() ?? string.Empty)"
+                   class="page-pill">@i</a>
             }
         }
 
         @if (Model.page < Model.totalPages)
         {
-            <a asp-action="Index" asp-route-page="@(Model.page + 1)" class="page-pill">›</a>
+            <a asp-action="Index"
+               asp-route-page="@(Model.page + 1)"
+                asp-route-codigo="@(Model.filtros.codigo?.ToString() ?? string.Empty)"
+                asp-route-piso="@(Model.filtros.piso.HasValue ? ((int)Model.filtros.piso.Value).ToString() : string.Empty)"
+                asp-route-estado="@(Model.filtros.estado?.ToString() ?? string.Empty)"
+               class="page-pill">›</a>
         }
         else
         {

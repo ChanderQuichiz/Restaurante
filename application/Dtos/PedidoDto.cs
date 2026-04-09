@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using application.Enums;
 
 namespace application.Dtos;
 
@@ -9,7 +10,7 @@ public record PedidoDto(
     [Required] int mesaId,
     [Required] DateTime fecha,
     [Required] double total,
-    [Required] string estado,
+    [Required] EstadoPedidoEnum estado,
     [Required][StringLength(20)] string dniCliente,
     [Required] string meseroNombre
 );

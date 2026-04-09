@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using application.Enums;
 
 namespace application.Dtos;
 
 public record CrearPlatoDto(
    [Required] string nombre,
    [Required] double precio,
-   [Required] string categoria,
-    [Required]string estado
+   [Required] CategoriaPlatoEnum categoria,
+    [Required] EstadoPlatoEnum estado
 );

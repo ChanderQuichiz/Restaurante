@@ -14,7 +14,6 @@ namespace application.Controllers
             _context = context;
         }
 
-        // LISTADO + FILTROS
         public IActionResult Index(string buscar, string metodo, DateTime? fecha)
         {
             var pagos = _context.Pagos
@@ -44,7 +43,6 @@ namespace application.Controllers
                 .ToList());
         }
 
-        // FORMULARIO CREAR
         public IActionResult Create(int pedidoId)
         {
             CargarCajeros();
@@ -59,7 +57,6 @@ namespace application.Controllers
             return View(pago);
         }
 
-        // GUARDAR PAGO
         [HttpPost]
         public IActionResult Create(PagoModel pago)
         {

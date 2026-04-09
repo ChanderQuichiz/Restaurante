@@ -1,5 +1,6 @@
 using application.Data;
 using application.Dtos;
+using application.Enums;
 using application.Models;
 using application.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -9,14 +10,17 @@ namespace application.Services;
 public class PedidoService : IPedidoService
 {
     private readonly DbAppContext context;
+    private const int PageSize = 10;
 
     public PedidoService(DbAppContext context)
     {
         this.context = context;
     }
 
-    public async Task<List<PedidoDto>> obtenerPedidos(string? buscar, string? estado, DateTime? fecha)
+    public async Task<PedidoVM> obtenerPedidosVM(int page = 1, string? buscar = null, EstadoPedidoEnum? estado = null, DateTime? fecha = null)
     {
+        page = page < 1 ? 1 : page;
+
         IQueryable<PedidoModel> pedidos = context.Pedidos
             .Include(p => p.Mesero)
             .Include(p => p.Mesa)
@@ -28,9 +32,9 @@ public class PedidoService : IPedidoService
             pedidos = pedidos.Where(p => p.dniCliente != null && p.dniCliente.Contains(dniBuscado));
         }
 
-        if (!string.IsNullOrWhiteSpace(estado) && estado != "Todos")
+        if (estado.HasValue)
         {
-            pedidos = pedidos.Where(p => p.estado == estado);
+            pedidos = pedidos.Where(p => p.estado == mapearEstadoTexto(estado.Value));
         }
 
         if (fecha.HasValue)
@@ -39,20 +43,37 @@ public class PedidoService : IPedidoService
             pedidos = pedidos.Where(p => p.fecha.Date == soloFecha);
         }
 
+        var totalPedidos = await pedidos.CountAsync();
+        var totalPages = (int)Math.Ceiling(totalPedidos / (double)PageSize);
+        totalPages = totalPages == 0 ? 1 : totalPages;
+
         List<PedidoModel> lista = await pedidos
             .OrderBy(p => p.id)
+            .Skip((page - 1) * PageSize)
+            .Take(PageSize)
             .ToListAsync();
 
-        return lista
-            .Select(PedidoMapper.ToPedidoDto)
-            .ToList();
+        return new PedidoVM(
+            lista.Select(PedidoMapper.ToPedidoDto).ToList(),
+            page,
+            totalPages,
+            buscar,
+            estado,
+            fecha
+        );
     }
 
     public async Task<PedidoDto> crearPedido(CrearPedidoDto crearPedidoDto)
     {
         PedidoModel pedido = PedidoMapper.ToPedidoModel(crearPedidoDto);
         pedido.fecha = DateTime.Now;
-        pedido.estado = crearPedidoDto.estado;
+        pedido.estado = crearPedidoDto.estado switch
+        {
+            EstadoPedidoEnum.Pendiente => "Pendiente",
+            EstadoPedidoEnum.EnProceso => "En proceso",
+            EstadoPedidoEnum.Entregado => "Entregado",
+            _ => "Pendiente"
+        };
 
         double total = 0;
         for (int i = 0; i < crearPedidoDto.platoIds.Count; i++)
@@ -138,5 +159,16 @@ public class PedidoService : IPedidoService
             .Where(p => p.estado == "Activo")
             .OrderBy(p => p.nombre)
             .ToListAsync();
+    }
+
+    private static string mapearEstadoTexto(EstadoPedidoEnum estado)
+    {
+        return estado switch
+        {
+            EstadoPedidoEnum.Pendiente => "Pendiente",
+            EstadoPedidoEnum.EnProceso => "En proceso",
+            EstadoPedidoEnum.Entregado => "Entregado",
+            _ => "Pendiente"
+        };
     }
 }

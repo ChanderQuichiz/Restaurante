@@ -1,5 +1,6 @@
 using System;
 using application.Dtos;
+using application.Enums;
 using application.Models;
 
 namespace application.Utils;
@@ -12,8 +13,12 @@ public class PlatoMapper
             id: model.id,
             nombre: model.nombre,
             precio: model.precio,
-            categoria: model.categoria,
-            estado: model.estado
+            categoria: Enum.TryParse<CategoriaPlatoEnum>(model.categoria, true, out var categoria)
+                ? categoria
+                : CategoriaPlatoEnum.Fondo,
+            estado: Enum.TryParse<EstadoPlatoEnum>(model.estado, true, out var estado)
+                ? estado
+                : EstadoPlatoEnum.ACTIVO
         );
     }
     public static PlatoModel ToPlatoModel(CrearPlatoDto crearPlatoDto)
@@ -22,8 +27,8 @@ public class PlatoMapper
         {
             nombre = crearPlatoDto.nombre,
             precio = crearPlatoDto.precio,
-            categoria = crearPlatoDto.categoria,
-            estado = crearPlatoDto.estado
+            categoria = crearPlatoDto.categoria.ToString(),
+            estado = crearPlatoDto.estado.ToString()
         };
     }
 }

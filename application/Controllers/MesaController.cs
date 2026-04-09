@@ -1,4 +1,5 @@
 using application.Dtos;
+using application.Enums;
 using application.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,22 +13,20 @@ namespace application.Controllers
             this.mesaService = mesaService;
         }
         
-        // GET: MesaController
         [HttpGet]
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1, int? codigo = null, PisoMesaEnum? piso = null, EstadoMesaEnum? estado = null)
         {
-            var model = await mesaService.obtenerMesaVM(page);
+            var filtrarMesaDto = new FiltrarMesaDto(codigo, piso, estado, page);
+            var model = await mesaService.obtenerMesaVM(page, filtrarMesaDto);
             return View(model);
         }
 
-        // GET: MesaController/Create
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: MesaController/Create
         [HttpPost]
         public async Task<IActionResult> Create(CrearMesaDto crearMesaDto)
         {
@@ -35,7 +34,6 @@ namespace application.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: MesaController/Edit/5
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -43,7 +41,6 @@ namespace application.Controllers
             return View(mesa);
         }
 
-        // POST: MesaController/Edit/5
         [HttpPost]
         public async Task<IActionResult> Edit(MesaDto mesaDto)
         {
@@ -51,7 +48,6 @@ namespace application.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: MesaController/Delete/5
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {

@@ -27,9 +27,17 @@
                 <label class="pedidos-filter-label">Estado</label>
                 <select class="pedidos-filter-select" asp-for="estado">
                     <option value="">-- Seleccionar --</option>
-                    <option value="LIBRE" selected>LIBRE</option>
-                    <option value="OCUPADO">OCUPADO</option>
-                    <option value="RESERVADO">RESERVADO</option>
+                    @foreach (var estado in Enum.GetValues<EstadoMesaEnum>())
+                    {
+                        if (estado == Model.estado)
+                        {
+                            <option value="@estado" selected>@estado</option>
+                        }
+                        else
+                        {
+                            <option value="@estado">@estado</option>
+                        }
+                    }
                 </select>
                 <span asp-validation-for="estado" class="text-danger"></span>
             </div>

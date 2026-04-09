@@ -1,6 +1,7 @@
 using System;
 using application.Data;
 using application.Dtos;
+using application.Enums;
 using application.Models;
 using application.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -25,8 +26,8 @@ public class PlatoService : IPlatoService
         }
         platoencontrado.nombre = actualizarPlatoDto.nombre;
         platoencontrado.precio = actualizarPlatoDto.precio;
-        platoencontrado.categoria = actualizarPlatoDto.categoria;
-        platoencontrado.estado = actualizarPlatoDto.estado;
+        platoencontrado.categoria = actualizarPlatoDto.categoria.ToString();
+        platoencontrado.estado = actualizarPlatoDto.estado.ToString();
         await context.SaveChangesAsync();
         return PlatoMapper.ToPlatoDto(platoencontrado);
 
@@ -47,7 +48,7 @@ public class PlatoService : IPlatoService
         {
             return false;
         }
-        plato.estado = "INACTIVO";
+        plato.estado = EstadoPlatoEnum.INACTIVO.ToString();
         await context.SaveChangesAsync();
         return true;
     }
@@ -58,34 +59,79 @@ public class PlatoService : IPlatoService
         return plato != null ? PlatoMapper.ToPlatoDto(plato) : null;
     }
 
-    public async Task<List<PlatoDto>> obtenerPlatos(int page = 1)
-    {
-        if (page < 1)
-        {
-            page = 1;
-        }
-        return await context.Platos.Select(p => PlatoMapper
-        .ToPlatoDto(p))
-        .AsNoTracking()
-        .Skip((page - 1) * PageSize)
-        .Take(PageSize)
-        .ToListAsync();
-    }
-
-    public async Task<int> contarPlatos()
-    {
-        return await context.Platos.CountAsync();
-    }
-
-    public async Task<PlatoVM> obtenerPlatoVM(int page = 1)
+    public async Task<List<PlatoDto>> obtenerPlatos(int page = 1, FiltrarPlatoDto? filtro = null)
     {
         if (page < 1)
         {
             page = 1;
         }
 
-        var platos = await obtenerPlatos(page);
-        var totalPlatos = await contarPlatos();
+        IQueryable<PlatoModel> query = context.Platos.AsQueryable();
+
+        if (filtro != null)
+        {
+            if (!string.IsNullOrWhiteSpace(filtro.buscar))
+            {
+                var buscar = filtro.buscar.Trim();
+                query = query.Where(p => p.nombre.Contains(buscar));
+            }
+
+            if (filtro.categoria.HasValue)
+            {
+                query = query.Where(p => p.categoria == filtro.categoria.Value.ToString());
+            }
+
+            if (filtro.estado.HasValue)
+            {
+                query = query.Where(p => p.estado == filtro.estado.Value.ToString());
+            }
+        }
+
+        return await query
+            .Select(p => PlatoMapper.ToPlatoDto(p))
+            .AsNoTracking()
+            .Skip((page - 1) * PageSize)
+            .Take(PageSize)
+            .ToListAsync();
+    }
+
+    public async Task<int> contarPlatos(FiltrarPlatoDto? filtro = null)
+    {
+        IQueryable<PlatoModel> query = context.Platos.AsQueryable();
+
+        if (filtro != null)
+        {
+            if (!string.IsNullOrWhiteSpace(filtro.buscar))
+            {
+                var buscar = filtro.buscar.Trim();
+                query = query.Where(p => p.nombre.Contains(buscar));
+            }
+
+            if (filtro.categoria.HasValue)
+            {
+                query = query.Where(p => p.categoria == filtro.categoria.Value.ToString());
+            }
+
+            if (filtro.estado.HasValue)
+            {
+                query = query.Where(p => p.estado == filtro.estado.Value.ToString());
+            }
+        }
+
+        return await query.CountAsync();
+    }
+
+    public async Task<PlatoVM> obtenerPlatoVM(int page = 1, FiltrarPlatoDto? filtro = null)
+    {
+        if (page < 1)
+        {
+            page = 1;
+        }
+
+        filtro ??= new FiltrarPlatoDto(null, null, null, page);
+
+        var platos = await obtenerPlatos(page, filtro);
+        var totalPlatos = await contarPlatos(filtro);
         var totalPages = (int)Math.Ceiling(totalPlatos / (double)PageSize);
 
         if (totalPages < 1)
@@ -93,6 +139,6 @@ public class PlatoService : IPlatoService
             totalPages = 1;
         }
 
-        return new PlatoVM(platos, page, totalPages);
+        return new PlatoVM(platos, page, totalPages, filtro with { page = page });
     }
 }

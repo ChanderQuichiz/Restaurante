@@ -1,4 +1,5 @@
 using application.Dtos;
+using application.Enums;
 using application.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,9 +16,10 @@ public PlatosController(IPlatoService platoService)
 
 
         [HttpGet]
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1, string? buscar = null, CategoriaPlatoEnum? categoria = null, EstadoPlatoEnum? estado = null)
         {
-            var model = await platoService.obtenerPlatoVM(page);
+            var filtro = new FiltrarPlatoDto(buscar, categoria, estado, page);
+            var model = await platoService.obtenerPlatoVM(page, filtro);
             return View(model);
         }
 

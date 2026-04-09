@@ -19,15 +19,12 @@
         var currentController = (ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty).ToLowerInvariant();
     }
 
-    <!-- SIDEBAR -->
     <aside class="w-[308px] min-w-[308px] bg-[#d82929] flex flex-col">
 
-        <!-- Logo -->
         <div class="px-3 pt-2 h-[285px] flex items-center justify-center">
             <img src="/assets/logo.png" class="w-full block">
         </div>
 
-        <!-- Navegación -->
         <nav class="flex-1">
 
                 <a asp-controller="Mesa" asp-action="Index"
@@ -56,7 +53,6 @@
 
         </nav>
 
-        <!-- Usuario -->
         <div class="flex items-center gap-3 px-5 py-6 border-t border-white/20">
             <img src="/assets/profile.png" class="w-14 h-14 rounded-full object-cover shrink-0">
             <div>
@@ -68,7 +64,6 @@
     </aside>
 
 
-    <!--EL Main -->
     <main class="flex-1 bg-[#fff7d7] px-11 py-9 flex flex-col gap-7">
 
         @RenderBody()

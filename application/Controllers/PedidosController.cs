@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using application.Dtos;
+using application.Enums;
 using application.Models;
 using application.Services;
 
@@ -14,11 +15,10 @@ public class PedidosController : Controller
         this.pedidoService = pedidoService;
     }
 
-    public async Task<IActionResult> Index(string buscar, string estado, DateTime? fecha)
+    public async Task<IActionResult> Index(int page = 1, string? buscar = null, EstadoPedidoEnum? estado = null, DateTime? fecha = null)
     {
-        List<PedidoDto> lista = await pedidoService.obtenerPedidos(buscar, estado, fecha);
-
-        return View(lista);
+        var model = await pedidoService.obtenerPedidosVM(page, buscar, estado, fecha);
+        return View(model);
     }
 
     [HttpGet]
@@ -37,7 +37,7 @@ public class PedidosController : Controller
     {
         await CargarCombos();
 
-        return View(new CrearPedidoDto(0, string.Empty, 0, "Pendiente", new List<int>(), new List<int>(), new List<double>()));
+        return View(new CrearPedidoDto(0, string.Empty, 0, EstadoPedidoEnum.Pendiente, new List<int>(), new List<int>(), new List<double>()));
     }
 
     [HttpPost]
