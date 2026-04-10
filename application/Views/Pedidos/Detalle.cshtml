@@ -1,31 +1,103 @@
-@model application.Dtos.PedidoDetalleVM
+﻿@model application.Dtos.PedidoDetalleVM
 
-<h2>Detalle del Pedido</h2>
+@{
+    ViewData["Title"] = "Detalle del Pedido";
+}
 
-<p><strong>ID Pedido:</strong> P-@Model.Pedido.id.ToString("000")</p>
-<p><strong>Usuario:</strong> @Model.UsuarioNombre</p>
-<p><strong>Fecha:</strong> @Model.Pedido.fecha.ToString("dd/MM/yyyy")</p>
-<p><strong>Estado:</strong> @Model.Pedido.estado</p>
-<p><strong>Total:</strong> S/ @Model.Pedido.total.ToString("0.00")</p>
+<div class="pedido-detalle-card">
 
-<table border="1">
-    <thead>
-        <tr>
-            <th>Plato</th>
-            <th>Cantidad</th>
-            <th>Precio</th>
-            <th>Subtotal</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Detalles)
-        {
-            <tr>
-                <td>@item.platoNombre</td>
-                <td>@item.cantidad</td>
-                <td>S/ @item.precioUnitario.ToString("0.00")</td>
-                <td>S/ @((item.cantidad * item.precioUnitario).ToString("0.00"))</td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="pedido-detalle-title-wrap">
+        <div class="pedido-detalle-title-row">
+            <div class="pedido-detalle-title-main">
+                <img src="/assets/rombo.png" class="page-mark" alt="Rombo">
+                <h1 class="page-title">Detalle del Pedido</h1>
+            </div>
+            <div class="pedido-detalle-title-meta">
+                <div class="pedido-detalle-item pedido-detalle-title-order">
+                    <span class="pedido-detalle-label">Pedido</span>
+                    <span class="pedido-detalle-value">P-@Model.Pedido.id.ToString("000")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pedido-detalle-grid">
+        <div class="pedido-detalle-item">
+            <span class="pedido-detalle-label">Usuario</span>
+            <span class="pedido-detalle-value">@Model.UsuarioNombre</span>
+        </div>
+
+        <div class="pedido-detalle-item">
+            <span class="pedido-detalle-label">Estado</span>
+            <span class="pedido-detalle-value pedido-estado-chip">
+                @Model.Pedido.estado
+            </span>
+        </div>
+
+        <div class="pedido-detalle-item">
+            <span class="pedido-detalle-label">Fecha</span>
+            <span class="pedido-detalle-value">@Model.Pedido.fecha.ToString("dd/MM/yyyy HH:mm")</span>
+        </div>
+
+        <div class="pedido-detalle-item">
+            <span class="pedido-detalle-label">Cantidad de platos</span>
+            <span class="pedido-detalle-value">@Model.Detalles.Count</span>
+        </div>
+    </div>
+
+    <div class="pedido-detalle-section-title">
+        Detalle de Platos
+    </div>
+
+    <div class="pedido-detalle-table-wrap">
+        <table class="pedidos-table pedido-detalle-table">
+            <thead>
+                <tr>
+                    <th>Plato</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Detalles != null && Model.Detalles.Any())
+                {
+                    @foreach (var item in Model.Detalles)
+                    {
+                        <tr>
+                            <td>@item.platoNombre</td>
+                            <td>@item.cantidad</td>
+                            <td>S/ @item.precioUnitario.ToString("0.00")</td>
+                            <td>S/ @((item.cantidad * item.precioUnitario).ToString("0.00"))</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="pedidos-empty">No hay detalles registrados.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pedido-total-footer">
+        <table class="pedido-total-minitable" aria-label="Total del pedido">
+            <tbody>
+                <tr>
+                    <th class="pedido-total-minitable-label" scope="row">Total a pagar</th>
+                    <td class="pedido-total-minitable-value">S/ @Model.Pedido.total.ToString("0.00")</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pedido-detalle-actions">
+        <a asp-action="Index" class="pedidos-filter-btn pedido-volver-btn">
+            ← Volver
+        </a>
+    </div>
+    
+
+</div>

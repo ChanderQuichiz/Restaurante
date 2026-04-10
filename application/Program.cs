@@ -8,6 +8,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IMesaService, MesaService>();
 builder.Services.AddScoped<IPlatoService, PlatoService>();
 builder.Services.AddScoped<IPedidoService, PedidoService>();
+builder.Services.AddScoped<IPagoService, PagoService>();
 builder.Services.AddDbContext<DbAppContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DefaultConnection"),

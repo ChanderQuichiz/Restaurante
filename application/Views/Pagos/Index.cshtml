@@ -1,11 +1,7 @@
-@model List<application.Models.PagoModel>
+@model application.Dtos.PagoVM
 
 @{
     ViewData["Title"] = "Pagos";
-
-    var buscar = Context.Request.Query["buscar"].ToString();
-    var metodoSel = Context.Request.Query["metodo"].ToString();
-    var fechaSel = Context.Request.Query["fecha"].ToString();
 }
 
 <div class="content-card">
@@ -23,31 +19,31 @@
                 <input type="text"
                        name="buscar"
                        class="pedidos-filter-input"
-                       value="@buscar"
-                       placeholder="Buscar por DNI del cliente" />
+                       value="@(Model.filtros.buscar ?? string.Empty)"
+                      placeholder="Buscar por pedido" />
             </div>
 
             <div class="pedidos-filter-item pedidos-filter-estado">
                 <label class="pedidos-filter-label">Método</label>
                 <select class="pedidos-filter-select" name="metodo">
-                    <option value="" selected="@(string.IsNullOrEmpty(metodoSel))">Todos</option>
-                    <option value="Efectivo" selected="@(metodoSel == "Efectivo")">Efectivo</option>
-                    <option value="Tarjeta" selected="@(metodoSel == "Tarjeta")">Tarjeta</option>
-                    <option value="Transferencia" selected="@(metodoSel == "Transferencia")">Transferencia</option>
+                    <option value="">Todos</option>
+                    <option value="Efectivo" selected="@(Model.filtros.metodo == "Efectivo")">Efectivo</option>
+                    <option value="Tarjeta" selected="@(Model.filtros.metodo == "Tarjeta")">Tarjeta</option>
+                    <option value="Transferencia" selected="@(Model.filtros.metodo == "Transferencia")">Transferencia</option>
                 </select>
             </div>
 
             <div class="pedidos-filter-item pedidos-filter-fecha">
                 <label class="pedidos-filter-label">Fecha</label>
-            <input type="date"
-                   class="pedidos-filter-input"
-                   name="fecha"
-                   value="@fechaSel" />
+                <input type="date"
+                       class="pedidos-filter-input"
+                       name="fecha"
+                       value="@(Model.filtros.fecha.HasValue ? Model.filtros.fecha.Value.ToString("yyyy-MM-dd") : string.Empty)" />
             </div>
 
             <div class="pedidos-filter-actions">
                 <button type="submit" class="pedidos-filter-btn">Filtrar</button>
-                <a asp-action="Create" asp-route-pedidoId="1" class="pedidos-filter-btn pedidos-filter-link-btn">Nuevo Pago</a>
+                <a asp-action="Create" class="pedidos-filter-btn pedidos-filter-link-btn">Nuevo Pago</a>
             </div>
         </div>
     </form>
@@ -65,14 +61,14 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model != null && Model.Any())
+                @if (Model != null && Model.pagos.Any())
                 {
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.pagos)
                     {
                         <tr>
                             <td>@item.id</td>
                             <td>@item.pedidoId</td>
-                            <td>@(item.Usuario != null ? item.Usuario.nombre : "-")</td>
+                            <td>@(string.IsNullOrWhiteSpace(item.cajeroNombre) ? "-" : item.cajeroNombre)</td>
                             <td>S/ @item.monto.ToString("0.00")</td>
                             <td>@item.fecha.ToString("dd/MM/yyyy HH:mm")</td>
                             <td class="status-green">@item.metodoPago</td>
@@ -87,5 +83,57 @@
                 }
             </tbody>
         </table>
+    </div>
+
+    <div class="pagination-mock">
+        @if (Model.page > 1)
+        {
+            <a asp-action="Index"
+               asp-route-page="@(Model.page - 1)"
+               asp-route-buscar="@(Model.filtros.buscar ?? string.Empty)"
+               asp-route-metodo="@(Model.filtros.metodo ?? string.Empty)"
+               asp-route-fecha="@(Model.filtros.fecha.HasValue ? Model.filtros.fecha.Value.ToString("yyyy-MM-dd") : string.Empty)"
+               class="page-pill">‹</a>
+        }
+        else
+        {
+            <div class="page-pill">‹</div>
+        }
+
+        @for (int i = 1; i <= Model.totalPages; i++)
+        {
+            if (i == Model.page)
+            {
+                <a asp-action="Index"
+                   asp-route-page="@i"
+                   asp-route-buscar="@(Model.filtros.buscar ?? string.Empty)"
+                   asp-route-metodo="@(Model.filtros.metodo ?? string.Empty)"
+                   asp-route-fecha="@(Model.filtros.fecha.HasValue ? Model.filtros.fecha.Value.ToString("yyyy-MM-dd") : string.Empty)"
+                   class="page-pill active">@i</a>
+            }
+            else
+            {
+                <a asp-action="Index"
+                   asp-route-page="@i"
+                   asp-route-buscar="@(Model.filtros.buscar ?? string.Empty)"
+                   asp-route-metodo="@(Model.filtros.metodo ?? string.Empty)"
+                   asp-route-fecha="@(Model.filtros.fecha.HasValue ? Model.filtros.fecha.Value.ToString("yyyy-MM-dd") : string.Empty)"
+                   class="page-pill">@i</a>
+            }
+        }
+
+        @if (Model.page < Model.totalPages)
+        {
+            <a asp-action="Index"
+               asp-route-page="@(Model.page + 1)"
+               asp-route-buscar="@(Model.filtros.buscar ?? string.Empty)"
+               asp-route-metodo="@(Model.filtros.metodo ?? string.Empty)"
+               asp-route-fecha="@(Model.filtros.fecha.HasValue ? Model.filtros.fecha.Value.ToString("yyyy-MM-dd") : string.Empty)"
+               class="page-pill">›</a>
+        }
+        else
+        {
+            <div class="page-pill">›</div>
+        }
     </div>
 </div>

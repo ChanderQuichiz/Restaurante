@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using application.Dtos;
 using application.Enums;
 using application.Models;
@@ -15,29 +15,52 @@ public class PedidosController : Controller
         this.pedidoService = pedidoService;
     }
 
-    public async Task<IActionResult> Index(int page = 1, string? buscar = null, EstadoPedidoEnum? estado = null, DateTime? fecha = null)
+    // =========================
+    // LISTADO
+    // =========================
+    public async Task<IActionResult> Index(
+        int page = 1,
+        string? buscar = null,
+        EstadoPedidoEnum? estado = null,
+        DateTime? fecha = null)
     {
         var model = await pedidoService.obtenerPedidosVM(page, buscar, estado, fecha);
         return View(model);
     }
 
+    // =========================
+    // DETALLE (AQUÍ ESTÁ LO IMPORTANTE)
+    // =========================
     [HttpGet]
     public async Task<IActionResult> Detalle(int id)
     {
-        PedidoDetalleVM? modelo = await pedidoService.obtenerDetallePedido(id);
+        var modelo = await pedidoService.obtenerDetallePedido(id);
+
         if (modelo == null)
         {
             return NotFound();
         }
-        return View(modelo);
+
+        return View(modelo); // 👈 esto abre Views/Pedidos/Detalle.cshtml
     }
 
+    // =========================
+    // CREAR
+    // =========================
     [HttpGet]
     public async Task<IActionResult> Create()
     {
         await CargarCombos();
 
-        return View(new CrearPedidoDto(0, string.Empty, 0, EstadoPedidoEnum.Pendiente, new List<int>(), new List<int>(), new List<double>()));
+        return View(new CrearPedidoDto(
+            0,
+            string.Empty,
+            0,
+            EstadoPedidoEnum.Pendiente,
+            new List<int>(),
+            new List<int>(),
+            new List<double>()
+        ));
     }
 
     [HttpPost]
@@ -49,11 +72,14 @@ public class PedidosController : Controller
             return View(crearPedidoDto);
         }
 
-        PedidoDto resultado = await pedidoService.crearPedido(crearPedidoDto);
+        await pedidoService.crearPedido(crearPedidoDto);
 
         return RedirectToAction("Index");
     }
 
+    // =========================
+    // COMBOS
+    // =========================
     private async Task CargarCombos()
     {
         ViewBag.Meseros = await pedidoService.obtenerMeserosActivos();

@@ -51,14 +51,19 @@
                 Filtrar
             </button>
 
+            
             <a asp-action="Create" class="pedidos-filter-btn pedidos-filter-link-btn">
                 Nuevo Pedido
             </a>
         </div>
     </div>
+    
+
 </form>
+
 <div class="pedidos-table-card">
 
+    
     <table class="pedidos-table">
         <thead>
             <tr>
@@ -84,14 +89,16 @@
                         <td>@item.dniCliente</td>
                         <td>Mesa @item.mesaId</td>
                         <td>@(item.estado == EstadoPedidoEnum.EnProceso ? "En proceso" : item.estado.ToString())</td>
-                        <td>
-                            @item.fecha.ToString("dd/MM/yyyy HH:mm")
-                        </td>
-                        <td>
-                            S/ @item.total.ToString("0.00")
-                        </td>
-                        <td>
-                            <button type="button" class="pedidos-table-detail-btn">Detalle</button>
+                        <td>@item.fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>S/ @item.total.ToString("0.00")</td>
+                        <td class="pedidos-accion-cell">
+                            <!-- BOTÓN DETALLE FUNCIONAL -->
+                            <a asp-controller="Pedidos"
+                               asp-action="Detalle"
+                               asp-route-id="@item.id"
+                               class="pedidos-table-detail-btn">
+                                Detalle
+                            </a>
                         </td>
                     </tr>
                 }
@@ -106,6 +113,7 @@
             }
         </tbody>
     </table>
+    
 
 </div>
 
@@ -124,6 +132,7 @@
         <div class="page-pill">‹</div>
     }
 
+    
     @for (int i = 1; i <= Model.totalPages; i++)
     {
         if (i == Model.page)
@@ -159,4 +168,6 @@
     {
         <div class="page-pill">›</div>
     }
+    
+
 </div>

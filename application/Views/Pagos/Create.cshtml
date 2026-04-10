@@ -1,4 +1,4 @@
-@model application.Models.PagoModel
+@model application.Dtos.CrearPagoDto
 
 @{
     ViewData["Title"] = "Crear Pago";
@@ -29,14 +29,6 @@
                     }
                 </select>
                 <span asp-validation-for="pedidoId" class="text-danger"></span>
-            </div>
-
-            <div class="pedidos-form-field">
-                <label class="pedidos-filter-label">DNI Cliente</label>
-                <div class="pedidos-input-with-btn">
-                    <input type="text" name="dniCliente" class="pedidos-filter-input pedidos-input-with-btn-control" placeholder="Ej: 72599882" />
-                    <button type="button" class="pedidos-input-inline-btn">Buscar</button>
-                </div>
             </div>
 
             <div class="pedidos-form-field">

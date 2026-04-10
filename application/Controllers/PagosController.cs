@@ -1,108 +1,51 @@
+using application.Dtos;
+using application.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using application.Data;
-using application.Models;
 
 namespace application.Controllers
 {
     public class PagosController : Controller
     {
-        private readonly DbAppContext _context;
+        private readonly IPagoService pagoService;
 
-        public PagosController(DbAppContext context)
+        public PagosController(IPagoService pagoService)
         {
-            _context = context;
+            this.pagoService = pagoService;
         }
 
-        public IActionResult Index(string buscar, string metodo, DateTime? fecha)
+        [HttpGet]
+        public async Task<IActionResult> Index(int page = 1, string? buscar = null, string? metodo = null, DateTime? fecha = null)
         {
-            var pagos = _context.Pagos
-                .Include(p => p.Pedido)
-                .Include(p => p.Usuario)
-                .AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(buscar))
-            {
-                var txt = buscar.Trim();
-                pagos = pagos.Where(p => p.pedidoId.ToString().Contains(txt));
-            }
-
-            if (!string.IsNullOrWhiteSpace(metodo))
-            {
-                pagos = pagos.Where(p => p.metodoPago == metodo);
-            }
-
-            if (fecha.HasValue)
-            {
-                var f = fecha.Value.Date;
-                pagos = pagos.Where(p => p.fecha.Date == f);
-            }
-
-            return View(pagos
-                .OrderByDescending(p => p.id)
-                .ToList());
+            var filtro = new FiltrarPagoDto(buscar, metodo, fecha, page);
+            var model = await pagoService.obtenerPagoVM(page, filtro);
+            return View(model);
         }
 
-        public IActionResult Create(int pedidoId)
+        [HttpGet]
+        public async Task<IActionResult> Create()
         {
-            CargarCajeros();
-            CargarPedidos();
-
-            var pago = new PagoModel
-            {
-                pedidoId = pedidoId,
-                fecha = DateTime.Now
-            };
-
-            return View(pago);
+            await CargarDatosFormulario();
+            return View(new CrearPagoDto(0, 0, 0, DateTime.Today, string.Empty));
         }
 
         [HttpPost]
-        public IActionResult Create(PagoModel pago)
+        public async Task<IActionResult> Create(CrearPagoDto crearPagoDto)
         {
             if (!ModelState.IsValid)
             {
-                CargarCajeros();
-                CargarPedidos();
-                return View(pago);
+                await CargarDatosFormulario();
+                return View(crearPagoDto);
             }
 
-            if (pago.fecha == default)
-            {
-                pago.fecha = DateTime.Now;
-            }
+            await pagoService.crearPagoDto(crearPagoDto);
 
-            _context.Pagos.Add(pago);
-            _context.SaveChanges();
-
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
-        private void CargarCajeros()
+        private async Task CargarDatosFormulario()
         {
-            List<UsuarioModel> cajeros = _context.Usuarios
-                .Where(u => u.estado == "Activo" && u.rol == "Cajero")
-                .OrderBy(u => u.nombre)
-                .ToList();
-
-            if (cajeros.Count == 0)
-            {
-                cajeros = _context.Usuarios
-                    .Where(u => u.estado == "Activo")
-                    .OrderBy(u => u.nombre)
-                    .ToList();
-            }
-
-            ViewBag.Cajeros = cajeros;
-        }
-
-        private void CargarPedidos()
-        {
-            List<PedidoModel> pedidos = _context.Pedidos
-                .OrderByDescending(p => p.id)
-                .ToList();
-
-            ViewBag.Pedidos = pedidos;
+            ViewBag.Cajeros = await pagoService.obtenerCajerosActivos();
+            ViewBag.Pedidos = await pagoService.obtenerPedidos();
         }
     }
 }

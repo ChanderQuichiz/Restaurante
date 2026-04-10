@@ -1363,11 +1363,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\chand\\OneDrive\\Documents\\Restaurante\\application\\application.csproj",
+      "projectUniqueName": "C:\\Users\\chand\\Downloads\\Restaurante-\\application\\application.csproj",
       "projectName": "application",
-      "projectPath": "C:\\Users\\chand\\OneDrive\\Documents\\Restaurante\\application\\application.csproj",
+      "projectPath": "C:\\Users\\chand\\Downloads\\Restaurante-\\application\\application.csproj",
       "packagesPath": "C:\\Users\\chand\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\chand\\OneDrive\\Documents\\Restaurante\\application\\obj\\",
+      "outputPath": "C:\\Users\\chand\\Downloads\\Restaurante-\\application\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\chand\\AppData\\Roaming\\NuGet\\NuGet.Config"
