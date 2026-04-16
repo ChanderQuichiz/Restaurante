@@ -1,0 +1,146 @@
+@model application.Dtos.UserVM
+
+@{
+    ViewData["Title"] = "Empleados";
+}
+
+<div class="content-card">
+    <div class="page-top pedidos-page-top">
+        <div class="page-title-wrap">
+            <img src="/assets/rombo.png" class="page-mark">
+            <h1 class="page-title">Gestión de Empleados</h1>
+        </div>
+    </div>
+
+    <form method="get">
+        <div class="pedidos-filters-row">
+            <div class="pedidos-filter-item pedidos-filter-buscar">
+                <label class="pedidos-filter-label">Buscar</label>
+                <input type="text" name="buscar" value="@(Model.filtros.buscar ?? string.Empty)" class="pedidos-filter-input" placeholder="Nombre, email o DNI" />
+            </div>
+
+            <div class="pedidos-filter-item pedidos-filter-estado">
+                <label class="pedidos-filter-label">Rol</label>
+                <select class="pedidos-filter-select" name="rol">
+                    <option value="">Todos</option>
+                    @foreach (var rol in new[] { "Admin", "Mesero", "Cajero", "Empleado" })
+                    {
+                        if (Model.filtros.rol == rol)
+                        {
+                            <option value="@rol" selected>@rol</option>
+                        }
+                        else
+                        {
+                            <option value="@rol">@rol</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="pedidos-filter-item pedidos-filter-estado">
+                <label class="pedidos-filter-label">Estado</label>
+                <select class="pedidos-filter-select" name="estado">
+                    <option value="">Todos</option>
+                    @foreach (var estado in new[] { "Activo", "Inactivo" })
+                    {
+                        if (Model.filtros.estado == estado)
+                        {
+                            <option value="@estado" selected>@estado</option>
+                        }
+                        else
+                        {
+                            <option value="@estado">@estado</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="pedidos-filter-actions">
+                <button type="submit" class="pedidos-filter-btn">Filtrar</button>
+                <a href="/empleados/crear" class="pedidos-filter-btn pedidos-filter-link-btn">Nuevo empleado</a>
+            </div>
+        </div>
+    </form>
+
+    <div class="pedidos-table-card">
+        <table class="pedidos-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>DNI</th>
+                    <th>Estado</th>
+                    <th>Expira</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.users != null && Model.users.Any())
+                {
+                    @foreach (var user in Model.users)
+                    {
+                        <tr>
+                            <td>@user.id</td>
+                            <td>@user.nombre</td>
+                            <td>@user.email</td>
+                            <td>@user.rol</td>
+                            <td>@(string.IsNullOrWhiteSpace(user.dni) ? "-" : user.dni)</td>
+                            <td class="@(user.estado == "Activo" ? "status-green" : "status-red")">@user.estado</td>
+                            <td>@user.fechaExpiracion.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="/empleados/editar/@user.id" class="action-btn" title="Editar">
+                                        <img src="/assets/editar.png" alt="Editar">
+                                    </a>
+                                    <a href="/empleados/eliminar/@user.id" class="action-btn form-delete-btn" title="Inactivar">
+                                        <img src="/assets/eliminar.png" alt="Inactivar">
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="pedidos-empty">No hay datos registrados.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination-mock">
+        @if (Model.page > 1)
+        {
+            <a href="@Url.Action("Index", "User", new { page = Model.page - 1, buscar = Model.filtros.buscar, rol = Model.filtros.rol, estado = Model.filtros.estado })" class="page-pill">‹</a>
+        }
+        else
+        {
+            <div class="page-pill">‹</div>
+        }
+
+        @for (int i = 1; i <= Model.totalPages; i++)
+        {
+            if (i == Model.page)
+            {
+                <a href="@Url.Action("Index", "User", new { page = i, buscar = Model.filtros.buscar, rol = Model.filtros.rol, estado = Model.filtros.estado })" class="page-pill active">@i</a>
+            }
+            else
+            {
+                <a href="@Url.Action("Index", "User", new { page = i, buscar = Model.filtros.buscar, rol = Model.filtros.rol, estado = Model.filtros.estado })" class="page-pill">@i</a>
+            }
+        }
+
+        @if (Model.page < Model.totalPages)
+        {
+            <a href="@Url.Action("Index", "User", new { page = Model.page + 1, buscar = Model.filtros.buscar, rol = Model.filtros.rol, estado = Model.filtros.estado })" class="page-pill">›</a>
+        }
+        else
+        {
+            <div class="page-pill">›</div>
+        }
+    </div>
+</div>

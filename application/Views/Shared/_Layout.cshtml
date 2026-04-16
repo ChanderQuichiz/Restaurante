@@ -17,6 +17,30 @@
 
     @{
         var currentController = (ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty).ToLowerInvariant();
+        var authSessionJson = Context.Session.GetString("AuthSession");
+        var authNombre = "Invitado";
+        var authRol = "SIN ROL";
+        var canSeeEmployees = false;
+
+        if (!string.IsNullOrWhiteSpace(authSessionJson))
+        {
+            try
+            {
+                var authSession = System.Text.Json.JsonSerializer.Deserialize<application.Dtos.AuthSessionDto>(authSessionJson);
+                if (authSession != null)
+                {
+                    authRol = authSession.rol;
+                    authNombre = authSession.nombre ?? (string.Equals(authSession.rol, "Admin", StringComparison.OrdinalIgnoreCase) ? "Admin" : "Empleado");
+                    canSeeEmployees = string.Equals(authSession.rol, "Admin", StringComparison.OrdinalIgnoreCase);
+                }
+            }
+            catch
+            {
+                authNombre = "Invitado";
+                authRol = "SIN ROL";
+                canSeeEmployees = false;
+            }
+        }
     }
 
     <aside class="w-[308px] min-w-[308px] bg-[#d82929] flex flex-col">
@@ -51,14 +75,27 @@
                 <span class="nav-item-title">PAGOS</span>
             </a>
 
+            @if (canSeeEmployees)
+            {
+                <a href="/empleados"
+                        class="sidebar-link flex items-center gap-3 px-5 py-4 text-[#fff7d7] no-underline @(currentController == "user" ? "sidebar-link-active" : "")">
+                    <img src="/assets/profile.png" class="w-9 h-9 object-contain shrink-0">
+                    <span class="nav-item-title">EMPLEADOS</span>
+                </a>
+            }
+
         </nav>
 
         <div class="flex items-center gap-3 px-5 py-6 border-t border-white/20">
             <img src="/assets/profile.png" class="w-14 h-14 rounded-full object-cover shrink-0">
             <div>
-                <p class="m-0 nav-user-name">linguini</p>
-                <p class="m-0 nav-user-role">MESERO</p>
+                <p class="m-0 nav-user-name">@authNombre</p>
+                <p class="m-0 nav-user-role">@authRol</p>
             </div>
+        </div>
+
+        <div class="logout-wrap">
+            <a href="/auth/logout" class="logout-btn">CERRAR SESIÓN</a>
         </div>
 
     </aside>

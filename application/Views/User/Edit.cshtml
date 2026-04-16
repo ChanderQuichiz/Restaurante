@@ -1,0 +1,95 @@
+@model application.Dtos.UserDto
+
+@{
+    ViewData["Title"] = "Editar Empleado";
+}
+
+<div class="pedidos-form-card">
+    <div class="page-top pedidos-page-top">
+        <div class="page-title-wrap">
+            <img src="/assets/rombo.png" class="page-mark">
+            <h1 class="page-title">Editar Empleado</h1>
+        </div>
+    </div>
+
+    <form action="/empleados/editar" method="post" class="pedidos-form">
+        <input type="hidden" asp-for="id" />
+
+        <div class="pedidos-form-grid">
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Nombre</label>
+                <input type="text" class="pedidos-filter-input" asp-for="nombre" placeholder="Ej: Juan Perez" />
+                <span asp-validation-for="nombre" class="text-danger"></span>
+            </div>
+
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Email</label>
+                <input type="email" class="pedidos-filter-input" asp-for="email" placeholder="empleado@correo.com" />
+                <span asp-validation-for="email" class="text-danger"></span>
+            </div>
+
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Contraseña</label>
+                <input type="text" class="pedidos-filter-input" asp-for="contrasena" placeholder="Ingresa una contraseña" />
+                <span asp-validation-for="contrasena" class="text-danger"></span>
+            </div>
+
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Rol</label>
+                <select class="pedidos-filter-select" asp-for="rol">
+                    @foreach (var rol in new[] { "Admin", "Mesero", "Cajero", "Empleado" })
+                    {
+                        if (Model.rol == rol)
+                        {
+                            <option value="@rol" selected>@rol</option>
+                        }
+                        else
+                        {
+                            <option value="@rol">@rol</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="rol" class="text-danger"></span>
+            </div>
+
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Estado</label>
+                <select class="pedidos-filter-select" asp-for="estado">
+                    @foreach (var estado in new[] { "Activo", "Inactivo" })
+                    {
+                        if (Model.estado == estado)
+                        {
+                            <option value="@estado" selected>@estado</option>
+                        }
+                        else
+                        {
+                            <option value="@estado">@estado</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="estado" class="text-danger"></span>
+            </div>
+
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Fecha de expiración</label>
+                <input type="date" class="pedidos-filter-input" asp-for="fechaExpiracion" value="@Model.fechaExpiracion.ToString("yyyy-MM-dd")" placeholder="yyyy-mm-dd" />
+                <span asp-validation-for="fechaExpiracion" class="text-danger"></span>
+            </div>
+
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">DNI</label>
+                <input type="text" class="pedidos-filter-input" asp-for="dni" placeholder="00000000" />
+                <span asp-validation-for="dni" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="pedidos-filter-actions pedidos-form-actions">
+            <button type="submit" class="pedidos-filter-btn">Actualizar</button>
+            <a href="/empleados" class="pedidos-filter-btn pedidos-filter-link-btn pedidos-filter-btn-secondary">Volver</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

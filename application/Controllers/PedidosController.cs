@@ -15,9 +15,6 @@ public class PedidosController : Controller
         this.pedidoService = pedidoService;
     }
 
-    // =========================
-    // LISTADO
-    // =========================
     public async Task<IActionResult> Index(
         int page = 1,
         string? buscar = null,
@@ -28,9 +25,6 @@ public class PedidosController : Controller
         return View(model);
     }
 
-    // =========================
-    // DETALLE (AQUÍ ESTÁ LO IMPORTANTE)
-    // =========================
     [HttpGet]
     public async Task<IActionResult> Detalle(int id)
     {
@@ -41,12 +35,9 @@ public class PedidosController : Controller
             return NotFound();
         }
 
-        return View(modelo); // 👈 esto abre Views/Pedidos/Detalle.cshtml
+        return View(modelo);
     }
 
-    // =========================
-    // CREAR
-    // =========================
     [HttpGet]
     public async Task<IActionResult> Create()
     {
@@ -77,9 +68,6 @@ public class PedidosController : Controller
         return RedirectToAction("Index");
     }
 
-    // =========================
-    // COMBOS
-    // =========================
     private async Task CargarCombos()
     {
         ViewBag.Meseros = await pedidoService.obtenerMeserosActivos();

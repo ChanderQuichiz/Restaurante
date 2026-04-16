@@ -1,0 +1,92 @@
+@model application.Dtos.LoginRequestDto
+@{
+    Layout = null;
+    ViewData["Title"] = "Iniciar sesión";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar sesión</title>
+    <link href="https://fonts.googleapis.com/css2?family=Holtwood+One+SC&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="login-body">
+    <div class="login-shell">
+        <div class="login-grid">
+            <div class="login-brand login-brand-column">
+                <img src="/assets/logo.png" alt="Restaurante" class="login-logo" />
+                <h1 class="login-title">Restaurante</h1>
+                <p class="login-copy">Accede con el perfil correspondiente para continuar.</p>
+            </div>
+
+            <div class="login-card login-form-column">
+                <div class="login-tabs">
+                    <button type="button" class="login-tab" data-tab="admin">Admin</button>
+                    <button type="button" class="login-tab" data-tab="empleado">Empleado</button>
+                </div>
+
+                <form method="post" action="/auth/login" class="login-form">
+                    <input type="hidden" name="tab" id="tabInput" value="@(string.IsNullOrWhiteSpace(Model.tab) ? "admin" : Model.tab.ToLowerInvariant())" />
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="login-error" asp-validation-summary="All"></div>
+                    }
+
+                    <div id="adminFields" class="login-hidden">
+                        <label class="pedidos-filter-label">Clave secreta</label>
+                        <input class="pedidos-filter-input" type="password" name="secretKey" placeholder="Clave de acceso admin" />
+                    </div>
+
+                    <div id="empleadoFields" class="login-hidden">
+                        <label class="pedidos-filter-label">Email</label>
+                        <input class="pedidos-filter-input" type="email" name="email" value="@Model.email" placeholder="empleado@correo.com" />
+
+                        <label class="pedidos-filter-label mt-3">Contraseña</label>
+                        <input class="pedidos-filter-input" type="password" name="password" placeholder="••••••" />
+                    </div>
+
+                    <button class="pedidos-filter-btn login-submit" type="submit">Ingresar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tabs = document.querySelectorAll('.login-tab');
+        const tabInput = document.getElementById('tabInput');
+        const adminFields = document.getElementById('adminFields');
+        const empleadoFields = document.getElementById('empleadoFields');
+        const initialTab = (tabInput.value || 'admin').toLowerCase();
+
+        function applyTab(tabName) {
+            tabs.forEach(t => {
+                const isActive = t.getAttribute('data-tab') === tabName;
+                t.classList.toggle('active', isActive);
+            });
+
+            tabInput.value = tabName;
+
+            if (tabName === 'admin') {
+                adminFields.classList.remove('login-hidden');
+                empleadoFields.classList.add('login-hidden');
+            } else {
+                adminFields.classList.add('login-hidden');
+                empleadoFields.classList.remove('login-hidden');
+            }
+        }
+
+        applyTab(initialTab === 'empleado' ? 'empleado' : 'admin');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.getAttribute('data-tab');
+                applyTab(tabName);
+            });
+        });
+    </script>
+</body>
+</html>

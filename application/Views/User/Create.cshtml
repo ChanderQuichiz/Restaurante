@@ -1,0 +1,78 @@
+@model application.Dtos.CreateUserDto
+
+@{
+    ViewData["Title"] = "Crear Empleado";
+}
+
+<div class="pedidos-form-card">
+    <div class="page-top pedidos-page-top">
+        <div class="page-title-wrap">
+            <img src="/assets/rombo.png" class="page-mark">
+            <h1 class="page-title">Crear Empleado</h1>
+        </div>
+    </div>
+
+    <form action="/empleados/crear" method="post" class="pedidos-form">
+        <div class="pedidos-form-grid">
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Nombre</label>
+                <input type="text" class="pedidos-filter-input" asp-for="nombre" placeholder="Ej: Juan Perez" />
+                <span asp-validation-for="nombre" class="text-danger"></span>
+            </div>
+
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Email</label>
+                <input type="email" class="pedidos-filter-input" asp-for="email" placeholder="empleado@correo.com" />
+                <span asp-validation-for="email" class="text-danger"></span>
+            </div>
+
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Contraseña</label>
+                <input type="password" class="pedidos-filter-input" asp-for="contrasena" placeholder="Ingresa una contraseña" />
+                <span asp-validation-for="contrasena" class="text-danger"></span>
+            </div>
+
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Rol</label>
+                <select class="pedidos-filter-select" asp-for="rol">
+                    <option value="">-- Seleccionar --</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Mesero">Mesero</option>
+                    <option value="Cajero">Cajero</option>
+                    <option value="Empleado">Empleado</option>
+                </select>
+                <span asp-validation-for="rol" class="text-danger"></span>
+            </div>
+
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Estado</label>
+                <select class="pedidos-filter-select" asp-for="estado">
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                </select>
+                <span asp-validation-for="estado" class="text-danger"></span>
+            </div>
+
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">Fecha de expiración</label>
+                <input type="date" class="pedidos-filter-input" asp-for="fechaExpiracion" placeholder="yyyy-mm-dd" />
+                <span asp-validation-for="fechaExpiracion" class="text-danger"></span>
+            </div>
+
+            <div class="pedidos-form-field">
+                <label class="pedidos-filter-label">DNI</label>
+                <input type="text" class="pedidos-filter-input" asp-for="dni" placeholder="00000000" />
+                <span asp-validation-for="dni" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="pedidos-filter-actions pedidos-form-actions">
+            <button type="submit" class="pedidos-filter-btn">Guardar</button>
+            <a href="/empleados" class="pedidos-filter-btn pedidos-filter-link-btn pedidos-filter-btn-secondary">Volver</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -334,7 +334,6 @@ C:\Users\chand\Downloads\Restaurante-master\application\obj\Debug\net10.0\applic
 C:\Users\chand\Downloads\Restaurante-master\application\obj\Debug\net10.0\application.genruntimeconfig.cache
 C:\Users\chand\Downloads\Restaurante-master\application\obj\Debug\net10.0\ref\application.dll
 C:\Users\chand\Downloads\Restaurante-master\application\obj\Debug\net10.0\compressed\xavr0g8rgu-{0}-uidz388m9t-uidz388m9t.gz
-C:\Users\chand\OneDrive\Documents\Restaurante\application\obj\Debug\net10.0\compressed\xavr0g8rgu-{0}-uidz388m9t-uidz388m9t.gz
 C:\Users\chand\OneDrive\Documents\Restaurante\application\obj\Debug\net10.0\compressed\rkjblvb5il-{0}-fr7q2aak1r-fr7q2aak1r.gz
 C:\Users\chand\OneDrive\Documents\Restaurante\application\obj\Debug\net10.0\compressed\psxyuxhnar-{0}-l3n5xuwxn8-l3n5xuwxn8.gz
 C:\Users\chand\OneDrive\Documents\Restaurante\application\obj\Debug\net10.0\compressed\2a0pq3c40i-{0}-ilo7uva0vt-ilo7uva0vt.gz
@@ -512,3 +511,4 @@ C:\Users\chand\Downloads\Restaurante-\application\obj\Debug\net10.0\application.
 C:\Users\chand\Downloads\Restaurante-\application\obj\Debug\net10.0\application.genruntimeconfig.cache
 C:\Users\chand\Downloads\Restaurante-\application\obj\Debug\net10.0\ref\application.dll
 C:\Users\chand\Downloads\Restaurante-\application\obj\Debug\net10.0\compressed\xavr0g8rgu-{0}-e75hs6cluo-e75hs6cluo.gz
+C:\Users\chand\OneDrive\Documents\Restaurante\application\obj\Debug\net10.0\compressed\xavr0g8rgu-{0}-s9cw7mg6sq-s9cw7mg6sq.gz
