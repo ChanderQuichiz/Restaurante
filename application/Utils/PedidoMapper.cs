@@ -11,6 +11,7 @@ public class PedidoMapper
     {
         return new PedidoDto(
             id: model.id,
+            correlativo: model.correlativo,
             meseroId: model.meseroId,
             mesaId: model.mesaId,
             fecha: model.fecha,
@@ -25,6 +26,7 @@ public class PedidoMapper
     {
         return new PedidoModel
         {
+            correlativo = string.Empty,
             meseroId = crearPedidoDto.meseroId,
             dniCliente = crearPedidoDto.dniCliente,
             mesaId = crearPedidoDto.mesaId,

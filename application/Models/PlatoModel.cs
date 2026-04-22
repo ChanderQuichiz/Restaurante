@@ -11,6 +11,11 @@ public class PlatoModel
     public int id {get; set;}
 
     [Required]
+    [MaxLength(20)]
+    [Column("correlativo")]
+    public string correlativo { get; set; } = string.Empty;
+
+    [Required]
     [StringLength(120)]
     public string nombre {get; set;} = string.Empty;
 

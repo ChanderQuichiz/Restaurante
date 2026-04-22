@@ -7,6 +7,7 @@ namespace application.Dtos;
 public record MesaDto
 (
     [Required] int id,
+   [Required] string correlativo,
    [Required] int numeroPiso,
    [Required] int capacidad,
     [Required] EstadoMesaEnum estado

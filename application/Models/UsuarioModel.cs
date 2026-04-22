@@ -9,6 +9,11 @@ public class UsuarioModel
     [Key]
     public int id { get; set; }
 
+    [Required]
+    [MaxLength(20)]
+    [Column("correlativo")]
+    public string correlativo { get; set; } = string.Empty;
+
     [Column("nombre")]
     public string nombre { get; set; } = string.Empty;
 

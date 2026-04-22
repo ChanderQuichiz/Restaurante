@@ -36,6 +36,7 @@ public class PlatoService : IPlatoService
     public async Task<PlatoDto?> crearPlatoDto(CrearPlatoDto crearPlatoDto)
     {
         PlatoModel platoModel = PlatoMapper.ToPlatoModel(crearPlatoDto);
+        platoModel.correlativo = await ObtenerSiguienteCorrelativoAsync();
         await context.Platos.AddAsync(platoModel);
         await context.SaveChangesAsync();
         return PlatoMapper.ToPlatoDto(platoModel);
@@ -73,7 +74,7 @@ public class PlatoService : IPlatoService
             if (!string.IsNullOrWhiteSpace(filtro.buscar))
             {
                 var buscar = filtro.buscar.Trim();
-                query = query.Where(p => p.nombre.Contains(buscar));
+                query = query.Where(p => p.correlativo.Contains(buscar) || p.nombre.Contains(buscar));
             }
 
             if (filtro.categoria.HasValue)
@@ -104,7 +105,7 @@ public class PlatoService : IPlatoService
             if (!string.IsNullOrWhiteSpace(filtro.buscar))
             {
                 var buscar = filtro.buscar.Trim();
-                query = query.Where(p => p.nombre.Contains(buscar));
+                query = query.Where(p => p.correlativo.Contains(buscar) || p.nombre.Contains(buscar));
             }
 
             if (filtro.categoria.HasValue)
@@ -140,5 +141,35 @@ public class PlatoService : IPlatoService
         }
 
         return new PlatoVM(platos, page, totalPages, filtro with { page = page });
+    }
+
+    private async Task<string> ObtenerSiguienteCorrelativoAsync()
+    {
+        var ultimoCorrelativo = await context.Platos
+            .AsNoTracking()
+            .Where(p => !string.IsNullOrWhiteSpace(p.correlativo))
+            .OrderByDescending(p => p.id)
+            .Select(p => p.correlativo)
+            .FirstOrDefaultAsync();
+
+        if (!string.IsNullOrWhiteSpace(ultimoCorrelativo))
+        {
+            return ConstruirCorrelativo(ultimoCorrelativo, "PLA");
+        }
+
+        var totalPlatos = await context.Platos.CountAsync();
+        return $"PLA-{totalPlatos + 1:D2}";
+    }
+
+    private static string ConstruirCorrelativo(string correlativoActual, string prefijo)
+    {
+        var partes = correlativoActual.Split('-', 2);
+
+        if (partes.Length == 2 && int.TryParse(partes[1], out var numero))
+        {
+            return $"{prefijo}-{numero + 1:D2}";
+        }
+
+        return $"{prefijo}-01";
     }
 }

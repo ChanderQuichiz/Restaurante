@@ -16,7 +16,7 @@
         <div class="pedidos-filters-row">
             <div class="pedidos-filter-item pedidos-filter-buscar">
                 <label class="pedidos-filter-label">Buscar</label>
-                <input type="text" name="buscar" value="@(Model.filtros.buscar ?? string.Empty)" class="pedidos-filter-input" placeholder="Nombre, email o DNI" />
+                <input type="text" name="buscar" value="@(Model.filtros.buscar ?? string.Empty)" class="pedidos-filter-input" placeholder="Buscar por correlativo" />
             </div>
 
             <div class="pedidos-filter-item pedidos-filter-estado">
@@ -66,7 +66,7 @@
         <table class="pedidos-table">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>Código</th>
                     <th>Nombre</th>
                     <th>Email</th>
                     <th>Rol</th>
@@ -82,7 +82,7 @@
                     @foreach (var user in Model.users)
                     {
                         <tr>
-                            <td>@user.id</td>
+                            <td>@user.correlativo</td>
                             <td>@user.nombre</td>
                             <td>@user.email</td>
                             <td>@user.rol</td>

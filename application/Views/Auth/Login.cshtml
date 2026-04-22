@@ -22,10 +22,21 @@
                 <p class="login-copy">Accede con el perfil correspondiente para continuar.</p>
             </div>
 
+
             <div class="login-card login-form-column">
+                <div class="login-form-header">
+                    <h2 class="login-form-title">Iniciar sesión</h2>
+                    <p class="login-form-description">Ingresa con tu perfil para gestionar mesas, pedidos y pagos del restaurante.</p>
+                </div>
+
                 <div class="login-tabs">
                     <button type="button" class="login-tab" data-tab="admin">Admin</button>
                     <button type="button" class="login-tab" data-tab="empleado">Empleado</button>
+                </div>
+
+                <!-- Logo solo visible en mobile -->
+                <div class="login-logo-mobile">
+                    <img src="/assets/logo.png" alt="Restaurante" class="login-logo" />
                 </div>
 
                 <form method="post" action="/auth/login" class="login-form">

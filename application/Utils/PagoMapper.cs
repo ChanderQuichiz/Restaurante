@@ -9,6 +9,7 @@ public class PagoMapper
     {
         return new PagoDto(
             id: model.id,
+            correlativo: model.correlativo,
             pedidoId: model.pedidoId,
             usuarioId: model.usuarioId,
             monto: model.monto,
@@ -22,6 +23,7 @@ public class PagoMapper
     {
         return new PagoModel
         {
+            correlativo = string.Empty,
             pedidoId = crearPagoDto.pedidoId,
             usuarioId = crearPagoDto.usuarioId,
             monto = crearPagoDto.monto,

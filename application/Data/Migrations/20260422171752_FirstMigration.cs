@@ -1,93 +1,82 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace application.Migrations
+namespace application.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class FirstMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterDatabase()
-                .Annotation("MySql:CharSet", "utf8mb4");
-
             migrationBuilder.CreateTable(
                 name: "mesas",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    correlativo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     numero_piso = table.Column<int>(type: "int", nullable: false),
                     capacidad = table.Column<int>(type: "int", nullable: false),
-                    estado = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                    estado = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_mesas", x => x.id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "platos",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    nombre = table.Column<string>(type: "varchar(120)", maxLength: 120, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    precio = table.Column<double>(type: "double", nullable: false),
-                    categoria = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    estado = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    correlativo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    nombre = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
+                    precio = table.Column<double>(type: "float", nullable: false),
+                    categoria = table.Column<string>(type: "nvarchar(80)", maxLength: 80, nullable: false),
+                    estado = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_platos", x => x.id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "usuarios",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    nombre = table.Column<string>(type: "varchar(120)", maxLength: 120, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    email = table.Column<string>(type: "varchar(180)", maxLength: 180, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    contrasena = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    rol = table.Column<string>(type: "varchar(40)", maxLength: 40, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    estado = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    fecha_expiracion = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    correlativo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    contrasena = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    rol = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    estado = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    fecha_expiracion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    dni = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_usuarios", x => x.id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "pedidos",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    fecha = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    total = table.Column<double>(type: "double", nullable: false),
-                    estado = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    correlativo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     usuario_id = table.Column<int>(type: "int", nullable: false),
-                    mesa_id = table.Column<int>(type: "int", nullable: false)
+                    dni_cliente = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    mesa_id = table.Column<int>(type: "int", nullable: false),
+                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    total = table.Column<double>(type: "float", nullable: false),
+                    estado = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -104,43 +93,18 @@ namespace application.Migrations
                         principalTable: "usuarios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "solicitudes",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    fecha = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    estado = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    contrato = table.Column<byte[]>(type: "longblob", nullable: false),
-                    usuario_id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_solicitudes", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_solicitudes_usuarios_usuario_id",
-                        column: x => x.usuario_id,
-                        principalTable: "usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "detalle_pedido",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    cantidad = table.Column<int>(type: "int", nullable: false),
-                    precio_unitario = table.Column<double>(type: "double", nullable: false),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     pedido_id = table.Column<int>(type: "int", nullable: false),
-                    plato_id = table.Column<int>(type: "int", nullable: false)
+                    plato_id = table.Column<int>(type: "int", nullable: false),
+                    cantidad = table.Column<int>(type: "int", nullable: false),
+                    precio_unitario = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -157,21 +121,20 @@ namespace application.Migrations
                         principalTable: "platos",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "pagos",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    fecha = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    monto = table.Column<double>(type: "double", nullable: false),
-                    metodo_pago = table.Column<string>(type: "varchar(40)", maxLength: 40, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    correlativo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     pedido_id = table.Column<int>(type: "int", nullable: false),
-                    usuario_id = table.Column<int>(type: "int", nullable: false)
+                    usuario_id = table.Column<int>(type: "int", nullable: false),
+                    monto = table.Column<double>(type: "float", nullable: false),
+                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    metodo_pago = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -187,9 +150,8 @@ namespace application.Migrations
                         column: x => x.usuario_id,
                         principalTable: "usuarios",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+                        onDelete: ReferentialAction.NoAction);
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_detalle_pedido_pedido_id",
@@ -220,11 +182,6 @@ namespace application.Migrations
                 name: "IX_pedidos_usuario_id",
                 table: "pedidos",
                 column: "usuario_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_solicitudes_usuario_id",
-                table: "solicitudes",
-                column: "usuario_id");
         }
 
         /// <inheritdoc />
@@ -235,9 +192,6 @@ namespace application.Migrations
 
             migrationBuilder.DropTable(
                 name: "pagos");
-
-            migrationBuilder.DropTable(
-                name: "solicitudes");
 
             migrationBuilder.DropTable(
                 name: "platos");

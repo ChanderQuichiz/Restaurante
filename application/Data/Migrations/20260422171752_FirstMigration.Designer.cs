@@ -3,24 +3,27 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using application.Data;
 
 #nullable disable
 
-namespace application.Migrations
+namespace application.Data.Migrations
 {
     [DbContext(typeof(DbAppContext))]
-    partial class DbAppContextModelSnapshot : ModelSnapshot
+    [Migration("20260422171752_FirstMigration")]
+    partial class FirstMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.11")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("application.Models.DetallePedidoModel", b =>
                 {
@@ -28,7 +31,7 @@ namespace application.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<int>("cantidad")
                         .HasColumnType("int")
@@ -43,7 +46,7 @@ namespace application.Migrations
                         .HasColumnName("plato_id");
 
                     b.Property<double>("precioUnitario")
-                        .HasColumnType("double")
+                        .HasColumnType("float")
                         .HasColumnName("precio_unitario");
 
                     b.HasKey("id");
@@ -62,16 +65,22 @@ namespace application.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<int>("capacidad")
                         .HasColumnType("int")
                         .HasColumnName("capacidad");
 
+                    b.Property<string>("correlativo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("correlativo");
+
                     b.Property<string>("estado")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("varchar(30)")
+                        .HasColumnType("nvarchar(30)")
                         .HasColumnName("estado");
 
                     b.Property<int>("numeroPiso")
@@ -89,19 +98,25 @@ namespace application.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("correlativo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("correlativo");
 
                     b.Property<DateTime>("fecha")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("fecha");
 
                     b.Property<string>("metodoPago")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("metodo_pago");
 
                     b.Property<double>("monto")
-                        .HasColumnType("double")
+                        .HasColumnType("float")
                         .HasColumnName("monto");
 
                     b.Property<int>("pedidoId")
@@ -127,20 +142,26 @@ namespace application.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("correlativo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("correlativo");
 
                     b.Property<string>("dniCliente")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("dni_cliente");
 
                     b.Property<string>("estado")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("estado");
 
                     b.Property<DateTime>("fecha")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("fecha");
 
                     b.Property<int>("mesaId")
@@ -152,7 +173,7 @@ namespace application.Migrations
                         .HasColumnName("usuario_id");
 
                     b.Property<double>("total")
-                        .HasColumnType("double")
+                        .HasColumnType("float")
                         .HasColumnName("total");
 
                     b.HasKey("id");
@@ -170,63 +191,35 @@ namespace application.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<string>("categoria")
                         .IsRequired()
                         .HasMaxLength(80)
-                        .HasColumnType("varchar(80)");
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("correlativo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("correlativo");
 
                     b.Property<string>("estado")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("varchar(30)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("nombre")
                         .IsRequired()
                         .HasMaxLength(120)
-                        .HasColumnType("varchar(120)");
+                        .HasColumnType("nvarchar(120)");
 
                     b.Property<double>("precio")
-                        .HasColumnType("double");
+                        .HasColumnType("float");
 
                     b.HasKey("id");
 
                     b.ToTable("platos");
-                });
-
-            modelBuilder.Entity("application.Models.SolicitudModel", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<byte[]>("contrato")
-                        .IsRequired()
-                        .HasColumnType("longblob")
-                        .HasColumnName("contrato");
-
-                    b.Property<string>("estado")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("varchar(30)")
-                        .HasColumnName("estado");
-
-                    b.Property<DateTime>("fecha")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("fecha");
-
-                    b.Property<int>("usuarioId")
-                        .HasColumnType("int")
-                        .HasColumnName("usuario_id");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("usuarioId");
-
-                    b.ToTable("solicitudes");
                 });
 
             modelBuilder.Entity("application.Models.UsuarioModel", b =>
@@ -235,39 +228,45 @@ namespace application.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<string>("contrasena")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("contrasena");
 
+                    b.Property<string>("correlativo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("correlativo");
+
                     b.Property<string>("dni")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("dni");
 
                     b.Property<string>("email")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("email");
 
                     b.Property<string>("estado")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("estado");
 
                     b.Property<DateTime>("fechaExpiracion")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("fecha_expiracion");
 
                     b.Property<string>("nombre")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("nombre");
 
                     b.Property<string>("rol")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("rol");
 
                     b.HasKey("id");
@@ -305,7 +304,7 @@ namespace application.Migrations
                     b.HasOne("application.Models.UsuarioModel", "Usuario")
                         .WithMany()
                         .HasForeignKey("usuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Pedido");
@@ -330,17 +329,6 @@ namespace application.Migrations
                     b.Navigation("Mesa");
 
                     b.Navigation("Mesero");
-                });
-
-            modelBuilder.Entity("application.Models.SolicitudModel", b =>
-                {
-                    b.HasOne("application.Models.UsuarioModel", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("usuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("application.Models.PedidoModel", b =>

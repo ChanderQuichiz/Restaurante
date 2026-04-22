@@ -15,5 +15,15 @@ public class DbAppContext : DbContext
     public DbSet<PedidoModel> Pedidos { get; set; }
     public DbSet<DetallePedidoModel> DetallePedidos { get; set; }
     public DbSet<PagoModel> Pagos { get; set; }
-    public DbSet<SolicitudModel> Solicitudes { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<PagoModel>()
+            .HasOne(p => p.Usuario)
+            .WithMany()
+            .HasForeignKey(p => p.usuarioId)
+            .OnDelete(DeleteBehavior.NoAction);
+    }
 }

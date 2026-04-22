@@ -9,6 +9,11 @@ public class PedidoModel
     [Key]
     public int id { get; set; }
 
+    [Required]
+    [MaxLength(20)]
+    [Column("correlativo")]
+    public string correlativo { get; set; } = string.Empty;
+
     [Column("usuario_id")]
     public int meseroId { get; set; }
 

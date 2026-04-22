@@ -58,6 +58,7 @@ public class PagoService : IPagoService
     public async Task<PagoDto?> crearPagoDto(CrearPagoDto crearPagoDto)
     {
         var pago = PagoMapper.ToPagoModel(crearPagoDto);
+        pago.correlativo = await ObtenerSiguienteCorrelativoAsync();
 
         if (pago.fecha == default)
         {
@@ -108,7 +109,7 @@ public class PagoService : IPagoService
         if (!string.IsNullOrWhiteSpace(filtro.buscar))
         {
             var txt = filtro.buscar.Trim();
-            query = query.Where(p => p.pedidoId.ToString().Contains(txt));
+            query = query.Where(p => p.correlativo.Contains(txt) || p.pedidoId.ToString().Contains(txt));
         }
 
         if (!string.IsNullOrWhiteSpace(filtro.metodo))
@@ -123,5 +124,35 @@ public class PagoService : IPagoService
         }
 
         return query;
+    }
+
+    private async Task<string> ObtenerSiguienteCorrelativoAsync()
+    {
+        var ultimoCorrelativo = await context.Pagos
+            .AsNoTracking()
+            .Where(p => !string.IsNullOrWhiteSpace(p.correlativo))
+            .OrderByDescending(p => p.id)
+            .Select(p => p.correlativo)
+            .FirstOrDefaultAsync();
+
+        if (!string.IsNullOrWhiteSpace(ultimoCorrelativo))
+        {
+            return ConstruirCorrelativo(ultimoCorrelativo, "PAG");
+        }
+
+        var totalPagos = await context.Pagos.CountAsync();
+        return $"PAG-{totalPagos + 1:D2}";
+    }
+
+    private static string ConstruirCorrelativo(string correlativoActual, string prefijo)
+    {
+        var partes = correlativoActual.Split('-', 2);
+
+        if (partes.Length == 2 && int.TryParse(partes[1], out var numero))
+        {
+            return $"{prefijo}-{numero + 1:D2}";
+        }
+
+        return $"{prefijo}-01";
     }
 }

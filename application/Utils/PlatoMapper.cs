@@ -11,6 +11,7 @@ public class PlatoMapper
     {
         return new PlatoDto(
             id: model.id,
+            correlativo: model.correlativo,
             nombre: model.nombre,
             precio: model.precio,
             categoria: Enum.TryParse<CategoriaPlatoEnum>(model.categoria, true, out var categoria)
@@ -25,6 +26,7 @@ public class PlatoMapper
     {
         return new PlatoModel
         {
+            correlativo = string.Empty,
             nombre = crearPlatoDto.nombre,
             precio = crearPlatoDto.precio,
             categoria = crearPlatoDto.categoria.ToString(),

@@ -24,7 +24,7 @@
                     {
                         @foreach (var p in pedidos)
                         {
-                            <option value="@p.id">P-@p.id.ToString("000") (DNI: @p.dniCliente)</option>
+                            <option value="@p.id">@p.correlativo (DNI: @p.dniCliente)</option>
                         }
                     }
                 </select>

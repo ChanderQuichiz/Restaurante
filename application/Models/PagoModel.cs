@@ -10,6 +10,11 @@ public class PagoModel
     [Key]
     public int id { get; set; }
 
+    [Required]
+    [MaxLength(20)]
+    [Column("correlativo")]
+    public string correlativo { get; set; } = string.Empty;
+
     [Column("pedido_id")]
     public int pedidoId { get; set; }
 

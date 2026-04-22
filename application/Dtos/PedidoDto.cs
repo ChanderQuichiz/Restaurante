@@ -6,6 +6,7 @@ namespace application.Dtos;
 
 public record PedidoDto(
     [Required] int id,
+    [Required] string correlativo,
     [Required] int meseroId,
     [Required] int mesaId,
     [Required] DateTime fecha,

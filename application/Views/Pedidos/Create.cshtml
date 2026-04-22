@@ -60,7 +60,7 @@
                     {
                         @foreach (var m in mesas)
                         {
-                            <option value="@m.id">Mesa @m.id - Piso @m.numeroPiso</option>
+                            <option value="@m.id">@m.correlativo - Piso @m.numeroPiso</option>
                         }
                     }
                 </select>
@@ -91,7 +91,7 @@
                             <option value="@p.id"
                                     data-nombre="@p.nombre"
                                     data-precio="@p.precio">
-                                @p.nombre - S/ @p.precio
+                                @p.nombre
                             </option>
                         }
                     }
@@ -204,7 +204,7 @@
                     Quitar
                 </button>
             </td>
-        ;
+        `;
 
         tbody.appendChild(row);
         recalcularTotal();

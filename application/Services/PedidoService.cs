@@ -28,8 +28,8 @@ public class PedidoService : IPedidoService
 
         if (!string.IsNullOrWhiteSpace(buscar))
         {
-            string dniBuscado = buscar.Trim();
-            pedidos = pedidos.Where(p => p.dniCliente != null && p.dniCliente.Contains(dniBuscado));
+            string correlativoBuscado = buscar.Trim();
+            pedidos = pedidos.Where(p => p.correlativo.Contains(correlativoBuscado) || (p.dniCliente != null && p.dniCliente.Contains(correlativoBuscado)));
         }
 
         if (estado.HasValue)
@@ -66,6 +66,7 @@ public class PedidoService : IPedidoService
     public async Task<PedidoDto> crearPedido(CrearPedidoDto crearPedidoDto)
     {
         PedidoModel pedido = PedidoMapper.ToPedidoModel(crearPedidoDto);
+        pedido.correlativo = await ObtenerSiguienteCorrelativoAsync();
         pedido.fecha = DateTime.Now;
         pedido.estado = crearPedidoDto.estado switch
         {
@@ -148,8 +149,8 @@ public class PedidoService : IPedidoService
     public async Task<List<MesaModel>> obtenerMesasDisponibles()
     {
         return await context.Mesas
-            .Where(m => m.estado == "Disponible")
-            .OrderBy(m => m.id)
+            .Where(m => m.estado == EstadoMesaEnum.LIBRE.ToString())
+            .OrderBy(m => m.correlativo)
             .ToListAsync();
     }
 
@@ -170,5 +171,35 @@ public class PedidoService : IPedidoService
             EstadoPedidoEnum.Entregado => "Entregado",
             _ => "Pendiente"
         };
+    }
+
+    private async Task<string> ObtenerSiguienteCorrelativoAsync()
+    {
+        var ultimoCorrelativo = await context.Pedidos
+            .AsNoTracking()
+            .Where(p => !string.IsNullOrWhiteSpace(p.correlativo))
+            .OrderByDescending(p => p.id)
+            .Select(p => p.correlativo)
+            .FirstOrDefaultAsync();
+
+        if (!string.IsNullOrWhiteSpace(ultimoCorrelativo))
+        {
+            return ConstruirCorrelativo(ultimoCorrelativo, "PED");
+        }
+
+        var totalPedidos = await context.Pedidos.CountAsync();
+        return $"PED-{totalPedidos + 1:D2}";
+    }
+
+    private static string ConstruirCorrelativo(string correlativoActual, string prefijo)
+    {
+        var partes = correlativoActual.Split('-', 2);
+
+        if (partes.Length == 2 && int.TryParse(partes[1], out var numero))
+        {
+            return $"{prefijo}-{numero + 1:D2}";
+        }
+
+        return $"{prefijo}-01";
     }
 }

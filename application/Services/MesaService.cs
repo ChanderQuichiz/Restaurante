@@ -39,6 +39,7 @@ public async Task<MesaDto?> actualizarMesaDto(MesaDto actualizarMesaDto)
 public async Task<MesaDto?> crearMesaDto(CrearMesaDto crearMesaDto)
 {
     MesaModel model = MesaMapper.ToMesaModel(crearMesaDto);
+    model.correlativo = await obtenerSiguienteCorrelativoAsync();
 
     await context.Mesas.AddAsync(model);
     await context.SaveChangesAsync();
@@ -76,8 +77,11 @@ public async Task<List<MesaDto>> obtenerMesas(int page = 1, FiltrarMesaDto? filt
 
     if (filtro != null)
     {
-        if (filtro.codigo != null)
-            query = query.Where(m => m.id == filtro.codigo);
+        if (!string.IsNullOrWhiteSpace(filtro.codigo))
+        {
+            var codigo = filtro.codigo.Trim();
+            query = query.Where(m => m.correlativo.Contains(codigo));
+        }
 
         if (filtro.piso != null)
             query = query.Where(m => m.numeroPiso == (int)filtro.piso.Value);
@@ -100,8 +104,11 @@ public async Task<int> contarMesas(FiltrarMesaDto? filtro = null)
 
     if (filtro != null)
     {
-        if (filtro.codigo != null)
-            query = query.Where(m => m.id == filtro.codigo);
+        if (!string.IsNullOrWhiteSpace(filtro.codigo))
+        {
+            var codigo = filtro.codigo.Trim();
+            query = query.Where(m => m.correlativo.Contains(codigo));
+        }
 
         if (filtro.piso != null)
             query = query.Where(m => m.numeroPiso == (int)filtro.piso.Value);
@@ -124,6 +131,36 @@ public async Task<MesaVM> obtenerMesaVM(int page = 1, FiltrarMesaDto? filtro = n
     totalPages = totalPages == 0 ? 1 : totalPages;
 
     return new MesaVM(mesas, page, totalPages, filtro ?? new FiltrarMesaDto(null, null, null, page));
+}
+
+private async Task<string> obtenerSiguienteCorrelativoAsync()
+{
+    var ultimoCorrelativo = await context.Mesas
+        .AsNoTracking()
+        .Where(m => !string.IsNullOrWhiteSpace(m.correlativo))
+        .OrderByDescending(m => m.id)
+        .Select(m => m.correlativo)
+        .FirstOrDefaultAsync();
+
+    if (!string.IsNullOrWhiteSpace(ultimoCorrelativo))
+    {
+        return construirCorrelativo(ultimoCorrelativo, "MES");
+    }
+
+    var totalMesas = await context.Mesas.CountAsync();
+    return $"MES-{totalMesas + 1:D2}";
+}
+
+private static string construirCorrelativo(string correlativoActual, string prefijo)
+{
+    var partes = correlativoActual.Split('-', 2);
+
+    if (partes.Length == 2 && int.TryParse(partes[1], out var numero))
+    {
+        return $"{prefijo}-{numero + 1:D2}";
+    }
+
+    return $"{prefijo}-01";
 }
 
   

@@ -1,3 +1,18 @@
+/* Logo solo visible en mobile debajo de los tabs */
+.login-logo-mobile {
+  display: none;
+  justify-content: center;
+  margin: 1.2rem 0 0.5rem 0;
+}
+
+@media (max-width: 900px) {
+  .login-brand-column {
+    display: none !important;
+  }
+  .login-logo-mobile {
+    display: flex !important;
+  }
+}
 /*  ESTILOS GLOBALES */
 
 html {
@@ -330,17 +345,16 @@ header h1 {
   gap: 0.4rem;
 }
 
+/* Filtros balanceados */
+/* Filtros balanceados, pero el de buscar más ancho */
 .pedidos-filter-buscar {
-  width: 220px;
+  width: 260px;
 }
-
-.pedidos-filter-estado {
-  width: 160px;
-}
-
+.pedidos-filter-estado,
 .pedidos-filter-fecha {
-  width: 180px;
+  width: 200px;
 }
+
 
 .pedidos-filter-label {
   font-weight: bold;
@@ -529,11 +543,10 @@ header h1 {
 .login-body {
   margin: 0;
   min-height: 100vh;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Holtwood One SC', serif;
   background:
-    radial-gradient(circle at top left, rgba(216, 41, 41, 0.08) 0%, transparent 28%),
-    radial-gradient(circle at bottom right, rgba(56, 56, 53, 0.08) 0%, transparent 22%),
-    linear-gradient(180deg, #fff8e8 0%, #f6eac2 100%);
+    radial-gradient(circle at top left, rgba(216, 41, 41, 0.1) 0%, transparent 30%),
+    linear-gradient(180deg, #fff7d7 0%, #f7eec5 100%);
 }
 
 .login-shell {
@@ -546,10 +559,10 @@ header h1 {
 
 .login-grid {
   width: 100%;
-  max-width: 860px;
+  max-width: 940px;
   display: grid;
-  grid-template-columns: 0.9fr 0.85fr;
-  gap: 0.9rem;
+  grid-template-columns: 0.95fr 1fr;
+  gap: 0;
   align-items: stretch;
 }
 
@@ -559,53 +572,76 @@ header h1 {
 }
 
 .login-brand-column {
-  background:
-    radial-gradient(circle at top right, rgba(216, 41, 41, 0.08) 0%, transparent 32%),
-    linear-gradient(180deg, #fffaf0 0%, #f3e4bc 100%);
-  border-radius: 18px;
-  padding: 1.45rem;
+  background: #d82929;
+  border-top-left-radius: 18px;
+  border-bottom-left-radius: 18px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  padding: 1.8rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #383835;
-  border: 1px solid rgba(56, 56, 53, 0.08);
+  color: #fff7d7;
+  border: 1px solid rgba(255, 247, 215, 0.15);
 }
 
 .login-logo {
-  width: 180px;
+  width: 210px;
   max-width: 70vw;
-  background: rgba(255, 255, 255, 0.68);
-  padding: 0.8rem 0.9rem;
-  border-radius: 18px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  padding: 0.7rem 1rem;
+
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    background: #fff !important;
+    border-radius: 100% !important;
 }
 
 .login-title {
   margin: 0.8rem 0 0;
-  font-size: 22px;
-  color: #383835;
+  font-size: 28px;
+  color: #fff7d7;
   letter-spacing: 0.03em;
 }
 
 .login-copy {
-  margin: 0.5rem 0 0;
-  color: #6f6752;
-  font-size: 13px;
+  margin: 0.65rem 0 0;
+  color: #fff1bf;
+  font-size: 14px;
   text-align: center;
   max-width: 22rem;
+  line-height: 1.45;
 }
 
 .login-card {
   width: 100%;
   max-width: none;
-  background: rgba(255, 255, 255, 0.82);
-  border-radius: 18px;
-  padding: 1.45rem 1.35rem;
-  box-shadow: 0 12px 26px rgba(56, 56, 53, 0.09);
-  border: 1px solid rgba(56, 56, 53, 0.08);
-  backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.96);
+  border-top-right-radius: 18px;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  align-items: stretch;
+  padding: 1.6rem 1.45rem;
+  box-shadow: 0 12px 24px rgba(56, 56, 53, 0.1);
+  border: 1px solid #d8d0aa;
   min-width: 0;
+}
+
+.login-form-header {
+  margin-bottom: 0.9rem;
+}
+
+.login-form-title {
+  margin: 0;
+  color: #383835;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.login-form-description {
+  margin: 0.45rem 0 0;
+  color: #6e6550;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .login-form-column {
@@ -623,14 +659,15 @@ header h1 {
 }
 
 .login-tab {
-  border: 1px solid rgba(56, 56, 53, 0.16);
-  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid #ccc08e;
+  background: #fff7d7;
   border-radius: 10px;
   padding: 0.6rem 0.7rem;
   cursor: pointer;
   color: #383835;
   font-weight: 600;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Holtwood One SC', serif;
+  font-size: 13px;
 }
 
 .login-tab.active {
@@ -647,7 +684,7 @@ header h1 {
 }
 
 .login-form .pedidos-filter-label {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Holtwood One SC', serif;
   color: #383835;
   font-size: 13px;
   letter-spacing: 0.02em;
@@ -655,9 +692,9 @@ header h1 {
 }
 
 .login-form .pedidos-filter-input {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  border-color: rgba(56, 56, 53, 0.18);
-  background: rgba(255, 255, 255, 0.96);
+  font-family: 'Holtwood One SC', serif;
+  border-color: #ccc08e;
+  background: #fffef7;
   color: #242424;
   width: 100%;
   box-sizing: border-box;
@@ -676,7 +713,7 @@ header h1 {
   width: 100%;
   background: #383835;
   color: #fff7d7;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Holtwood One SC', serif;
   font-weight: 700;
   cursor: pointer;
   transition: none;
@@ -704,17 +741,19 @@ header h1 {
     grid-template-columns: 1fr;
     max-width: 520px;
   }
-
   .login-brand-column {
     padding: 1.4rem;
   }
-
   .login-logo {
-    width: 170px;
-  }
-
-  .login-copy {
-    max-width: none;
+    width: 120px;
+    height: 120px;
+    max-width: 40vw;
+    background: #fff !important;
+    padding: 0;
+    border-radius: 50% !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    object-fit: cover;
+    display: block;
   }
 }
 /* =========================
@@ -869,7 +908,14 @@ header h1 {
   font-size: 20px;
   color: #111;
   font-weight: 600;
-  background: #fff;
+    background: #fff;
+}
+
+@media (max-width: 900px) {
+  .login-logo {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
 }
 
 .pedido-detalle-section-title {
@@ -900,53 +946,47 @@ header h1 {
 }
 
 @media (max-width: 992px) {
-    .pedido-detalle-grid {
-        grid-template-columns: repeat(2, minmax(180px, 1fr));
-    }
+  .pedido-detalle-grid {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 50% !important;
+  }
 }
 
 @media (max-width: 768px) {
-    .pedido-detalle-card {
-        padding: 18px;
-    }
-
-  .pedido-detalle-title-row {
-    flex-direction: column;
-    align-items: flex-start;
+  .pedido-detalle-card {
+    padding: 18px;
   }
-
+  .login-logo {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 12px !important;
+  }
   .pedido-detalle-title-meta {
     width: 100%;
     margin-left: 0;
     flex-direction: column;
   }
-
   .pedido-detalle-title-order {
     width: 100%;
     margin-left: 0;
   }
-
-    .pedido-detalle-header {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .pedido-detalle-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .pedido-total-box {
-      width: 100%;
-      min-width: 0;
-    }
-
-    .pedido-total-minitable {
-        width: 100%;
-        min-width: 0;
-    }
-
-    .pedido-total-footer {
-        justify-content: stretch;
-    }
-
+  .pedido-detalle-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .pedido-detalle-grid {
+    grid-template-columns: 1fr;
+  }
+  .pedido-total-box {
+    width: 100%;
+    min-width: 0;
+  }
+  .pedido-total-minitable {
+    width: 100%;
+    min-width: 0;
+  }
+  .pedido-total-footer {
+    justify-content: stretch;
+  }
 }

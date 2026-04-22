@@ -11,6 +11,11 @@ public class MesaModel
     [Column("id")]
     public int id {get; set;}
 
+    [Required]
+    [MaxLength(20)]
+    [Column("correlativo")]
+    public string correlativo { get; set; } = string.Empty;
+
 
 
     [Required]

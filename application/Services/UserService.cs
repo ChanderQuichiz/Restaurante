@@ -55,6 +55,7 @@ public class UserService : IUserService
     {
         var user = new UsuarioModel
         {
+            correlativo = await ObtenerSiguienteCorrelativoAsync(),
             nombre = createUserDto.nombre,
             email = createUserDto.email,
             contrasena = createUserDto.contrasena,
@@ -121,6 +122,7 @@ public class UserService : IUserService
         {
             var txt = filtro.buscar.Trim();
             query = query.Where(u =>
+                u.correlativo.Contains(txt) ||
                 u.nombre.Contains(txt) ||
                 u.email.Contains(txt) ||
                 (u.dni != null && u.dni.Contains(txt)));
@@ -143,6 +145,7 @@ public class UserService : IUserService
     {
         return new UserDto(
             user.id,
+            user.correlativo,
             user.nombre,
             user.email,
             user.contrasena,
@@ -151,6 +154,36 @@ public class UserService : IUserService
             user.fechaExpiracion,
             user.dni
         );
+    }
+
+    private async Task<string> ObtenerSiguienteCorrelativoAsync()
+    {
+        var ultimoCorrelativo = await context.Usuarios
+            .AsNoTracking()
+            .Where(u => !string.IsNullOrWhiteSpace(u.correlativo))
+            .OrderByDescending(u => u.id)
+            .Select(u => u.correlativo)
+            .FirstOrDefaultAsync();
+
+        if (!string.IsNullOrWhiteSpace(ultimoCorrelativo))
+        {
+            return ConstruirCorrelativo(ultimoCorrelativo, "USU");
+        }
+
+        var totalUsers = await context.Usuarios.CountAsync();
+        return $"USU-{totalUsers + 1:D2}";
+    }
+
+    private static string ConstruirCorrelativo(string correlativoActual, string prefijo)
+    {
+        var partes = correlativoActual.Split('-', 2);
+
+        if (partes.Length == 2 && int.TryParse(partes[1], out var numero))
+        {
+            return $"{prefijo}-{numero + 1:D2}";
+        }
+
+        return $"{prefijo}-01";
     }
 
 }

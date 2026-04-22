@@ -14,7 +14,7 @@ namespace application.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> Index(int page = 1, int? codigo = null, PisoMesaEnum? piso = null, EstadoMesaEnum? estado = null)
+        public async Task<IActionResult> Index(int page = 1, string? codigo = null, PisoMesaEnum? piso = null, EstadoMesaEnum? estado = null)
         {
             var filtrarMesaDto = new FiltrarMesaDto(codigo, piso, estado, page);
             var model = await mesaService.obtenerMesaVM(page, filtrarMesaDto);

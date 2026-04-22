@@ -11,6 +11,11 @@ public class SolicitudModel
     public int id { get; set; }
 
     [Required]
+    [MaxLength(20)]
+    [Column("correlativo")]
+    public string correlativo { get; set; } = string.Empty;
+
+    [Required]
     [Column("fecha")]
     public DateTime fecha { get; set; }
 
@@ -20,7 +25,7 @@ public class SolicitudModel
     public string estado { get; set; } = string.Empty;
 
     [Required]
-    [Column("contrato", TypeName = "longblob")]
+    [Column("contrato", TypeName = "varbinary(max)")]
     public byte[] contrato { get; set; } = Array.Empty<byte>();
 
     [ForeignKey(nameof(Usuario))]

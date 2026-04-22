@@ -11,6 +11,7 @@ public class MesaMapper
     {
         return new MesaDto(
             id: model.id,
+            correlativo: model.correlativo,
             numeroPiso: model.numeroPiso,
             capacidad: model.capacidad,
             estado: Enum.TryParse<EstadoMesaEnum>(model.estado, true, out var estado)
@@ -22,7 +23,7 @@ public class MesaMapper
     {
         return new MesaModel
         {
-            
+            correlativo = string.Empty,
             numeroPiso = crearMesaDto.numeroPiso,
             capacidad = crearMesaDto.capacidad,
             estado = crearMesaDto.estado.ToString()

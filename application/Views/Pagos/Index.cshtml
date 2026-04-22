@@ -20,7 +20,7 @@
                        name="buscar"
                        class="pedidos-filter-input"
                        value="@(Model.filtros.buscar ?? string.Empty)"
-                      placeholder="Buscar por pedido" />
+                      placeholder="Buscar por correlativo" />
             </div>
 
             <div class="pedidos-filter-item pedidos-filter-estado">
@@ -52,7 +52,7 @@
         <table class="pedidos-table">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>Código</th>
                     <th>Pedido</th>
                     <th>Cajero</th>
                     <th>Monto</th>
@@ -66,7 +66,7 @@
                     @foreach (var item in Model.pagos)
                     {
                         <tr>
-                            <td>@item.id</td>
+                            <td>@item.correlativo</td>
                             <td>@item.pedidoId</td>
                             <td>@(string.IsNullOrWhiteSpace(item.cajeroNombre) ? "-" : item.cajeroNombre)</td>
                             <td>S/ @item.monto.ToString("0.00")</td>

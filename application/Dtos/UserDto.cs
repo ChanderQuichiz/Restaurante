@@ -4,6 +4,7 @@ namespace application.Dtos;
 
 public record UserDto(
     [Required] int id,
+    [Required] string correlativo,
     [Required] string nombre,
     [Required, EmailAddress] string email,
     [Required] string contrasena,

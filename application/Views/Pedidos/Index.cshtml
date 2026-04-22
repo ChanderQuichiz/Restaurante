@@ -18,7 +18,7 @@
             <input type="text"
                    name="buscar"
                    value="@(Model.buscar ?? string.Empty)"
-                   placeholder="Buscar por DNI"
+                   placeholder="Buscar por correlativo"
                    class="pedidos-filter-input" />
         </div>
         <div class="pedidos-filter-item pedidos-filter-estado">
@@ -67,7 +67,7 @@
     <table class="pedidos-table">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>Código</th>
                 <th>Mesero</th>
                 <th>DNI Cliente</th>
                 <th>Mesa</th>
@@ -84,7 +84,7 @@
                 @foreach (var item in Model.pedidos)
                 {
                     <tr>
-                        <td>@item.id</td>
+                        <td>@item.correlativo</td>
                         <td>@item.meseroNombre</td>
                         <td>@item.dniCliente</td>
                         <td>Mesa @item.mesaId</td>
