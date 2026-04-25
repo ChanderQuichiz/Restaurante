@@ -1,205 +1,103 @@
-using application.Data;
 using application.Dtos;
 using application.Enums;
 using application.Models;
+using application.Repositories;
 using application.Utils;
-using Microsoft.EntityFrameworkCore;
 
 namespace application.Services;
 
 public class PedidoService : IPedidoService
 {
-    private readonly DbAppContext context;
+    private readonly IPedidoRepository  _pedidoRepository;
+    private readonly IUsuarioRepository _usuarioRepository;
+    private readonly IMesaRepository    _mesaRepository;
+    private readonly IPlatoRepository   _platoRepository;
     private const int PageSize = 10;
 
-    public PedidoService(DbAppContext context)
+    public PedidoService(
+        IPedidoRepository  pedidoRepository,
+        IUsuarioRepository usuarioRepository,
+        IMesaRepository    mesaRepository,
+        IPlatoRepository   platoRepository)
     {
-        this.context = context;
+        _pedidoRepository  = pedidoRepository;
+        _usuarioRepository = usuarioRepository;
+        _mesaRepository    = mesaRepository;
+        _platoRepository   = platoRepository;
     }
 
-    public async Task<PedidoVM> obtenerPedidosVM(int page = 1, string? buscar = null, EstadoPedidoEnum? estado = null, DateTime? fecha = null)
+    public async Task<PedidoDto> crearPedido(CrearPedidoDto dto)
     {
-        page = page < 1 ? 1 : page;
+        PedidoModel pedido = PedidoMapper.ToPedidoModel(dto);
+        pedido.fecha  = DateTime.Now;
+        pedido.estado = MapearEstado(dto.estado);
+        pedido.total  = dto.platoIds
+            .Select((_, i) => dto.cantidades[i] * dto.precios[i])
+            .Sum();
 
-        IQueryable<PedidoModel> pedidos = context.Pedidos
-            .Include(p => p.Mesero)
-            .Include(p => p.Mesa)
-            .AsQueryable();
+        pedido = await _pedidoRepository.Add(pedido); // correlativo generado en el repo
 
-        if (!string.IsNullOrWhiteSpace(buscar))
+        for (int i = 0; i < dto.platoIds.Count; i++)
         {
-            string correlativoBuscado = buscar.Trim();
-            pedidos = pedidos.Where(p => p.correlativo.Contains(correlativoBuscado) || (p.dniCliente != null && p.dniCliente.Contains(correlativoBuscado)));
-        }
-
-        if (estado.HasValue)
-        {
-            pedidos = pedidos.Where(p => p.estado == mapearEstadoTexto(estado.Value));
-        }
-
-        if (fecha.HasValue)
-        {
-            DateTime soloFecha = fecha.Value.Date;
-            pedidos = pedidos.Where(p => p.fecha.Date == soloFecha);
-        }
-
-        var totalPedidos = await pedidos.CountAsync();
-        var totalPages = (int)Math.Ceiling(totalPedidos / (double)PageSize);
-        totalPages = totalPages == 0 ? 1 : totalPages;
-
-        List<PedidoModel> lista = await pedidos
-            .OrderBy(p => p.id)
-            .Skip((page - 1) * PageSize)
-            .Take(PageSize)
-            .ToListAsync();
-
-        return new PedidoVM(
-            lista.Select(PedidoMapper.ToPedidoDto).ToList(),
-            page,
-            totalPages,
-            buscar,
-            estado,
-            fecha
-        );
-    }
-
-    public async Task<PedidoDto> crearPedido(CrearPedidoDto crearPedidoDto)
-    {
-        PedidoModel pedido = PedidoMapper.ToPedidoModel(crearPedidoDto);
-        pedido.correlativo = await ObtenerSiguienteCorrelativoAsync();
-        pedido.fecha = DateTime.Now;
-        pedido.estado = crearPedidoDto.estado switch
-        {
-            EstadoPedidoEnum.Pendiente => "Pendiente",
-            EstadoPedidoEnum.EnProceso => "En proceso",
-            EstadoPedidoEnum.Entregado => "Entregado",
-            _ => "Pendiente"
-        };
-
-        double total = 0;
-        for (int i = 0; i < crearPedidoDto.platoIds.Count; i++)
-        {
-            total += crearPedidoDto.cantidades[i] * crearPedidoDto.precios[i];
-        }
-
-        pedido.total = total;
-
-        await context.Pedidos.AddAsync(pedido);
-        await context.SaveChangesAsync();
-
-        for (int i = 0; i < crearPedidoDto.platoIds.Count; i++)
-        {
-            DetallePedidoModel detalle = new DetallePedidoModel
+            await _pedidoRepository.AddDetalle(new DetallePedidoModel
             {
-                pedidoId = pedido.id,
-                platoId = crearPedidoDto.platoIds[i],
-                cantidad = crearPedidoDto.cantidades[i],
-                precioUnitario = crearPedidoDto.precios[i]
-            };
-
-            await context.DetallePedidos.AddAsync(detalle);
+                pedidoId       = pedido.id,
+                platoId        = dto.platoIds[i],
+                cantidad       = dto.cantidades[i],
+                precioUnitario = dto.precios[i]
+            });
         }
 
-        await context.SaveChangesAsync();
+        await _pedidoRepository.SaveChanges();
 
-        UsuarioModel? mesero = await context.Usuarios
-            .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.id == pedido.meseroId);
-
-        if (mesero != null)
-        {
-            pedido.Mesero = mesero;
-        }
+        // Enriquecer con mesero para la respuesta
+        UsuarioModel? mesero = await _usuarioRepository.GetById(pedido.meseroId);
+        if (mesero != null) pedido.Mesero = mesero;
 
         return PedidoMapper.ToPedidoDto(pedido);
     }
 
+    public async Task<PedidoVM> obtenerPedidosVM(
+        int page = 1, string? buscar = null,
+        EstadoPedidoEnum? estado = null, DateTime? fecha = null)
+    {
+        page = page < 1 ? 1 : page;
+
+        var lista      = await _pedidoRepository.GetAll(page, PageSize, buscar, estado, fecha);
+        var total      = await _pedidoRepository.Count(buscar, estado, fecha);
+        var totalPages = Math.Max(1, (int)Math.Ceiling(total / (double)PageSize));
+
+        return new PedidoVM(
+            lista.Select(PedidoMapper.ToPedidoDto).ToList(),
+            page, totalPages, buscar, estado, fecha);
+    }
+
     public async Task<PedidoDetalleVM?> obtenerDetallePedido(int pedidoId)
     {
-        PedidoModel? pedido = await context.Pedidos
-            .Include(p => p.Mesero)
-            .Include(p => p.Detalles)
-            .ThenInclude(d => d.Plato)
-            .FirstOrDefaultAsync(p => p.id == pedidoId);
+        PedidoModel? pedido = await _pedidoRepository.GetByIdConDetalle(pedidoId);
+        if (pedido == null) return null;
 
-        if (pedido == null)
-        {
-            return null;
-        }
-
-        List<DetallePedidoDto> detalles = pedido.Detalles
-            .Select(PedidoMapper.ToDetallePedidoDto)
-            .ToList();
-
-        return new PedidoDetalleVM(
-            PedidoMapper.ToPedidoDto(pedido),
-            detalles,
-            pedido.Mesero.nombre
-        );
+        var detalles = pedido.Detalles.Select(PedidoMapper.ToDetallePedidoDto).ToList();
+        return new PedidoDetalleVM(PedidoMapper.ToPedidoDto(pedido), detalles, pedido.Mesero.nombre);
     }
 
     public async Task<List<UsuarioModel>> obtenerMeserosActivos()
-    {
-        return await context.Usuarios
-            .Where(u => u.estado == "Activo" && u.rol == "Mesero")
-            .OrderBy(u => u.nombre)
-            .ToListAsync();
-    }
+        => await _usuarioRepository.GetActivosByRol("Mesero");
 
     public async Task<List<MesaModel>> obtenerMesasDisponibles()
-    {
-        return await context.Mesas
-            .Where(m => m.estado == EstadoMesaEnum.LIBRE.ToString())
-            .OrderBy(m => m.correlativo)
-            .ToListAsync();
-    }
+        => await _mesaRepository.GetAll(
+            page: 1, pageSize: int.MaxValue,
+            filtro: new FiltrarMesaDto(null, null, EstadoMesaEnum.LIBRE, 1));
 
     public async Task<List<PlatoModel>> obtenerPlatosActivos()
+        => await _platoRepository.GetActivos();
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    private static string MapearEstado(EstadoPedidoEnum estado) => estado switch
     {
-        return await context.Platos
-            .Where(p => p.estado == "Activo")
-            .OrderBy(p => p.nombre)
-            .ToListAsync();
-    }
-
-    private static string mapearEstadoTexto(EstadoPedidoEnum estado)
-    {
-        return estado switch
-        {
-            EstadoPedidoEnum.Pendiente => "Pendiente",
-            EstadoPedidoEnum.EnProceso => "En proceso",
-            EstadoPedidoEnum.Entregado => "Entregado",
-            _ => "Pendiente"
-        };
-    }
-
-    private async Task<string> ObtenerSiguienteCorrelativoAsync()
-    {
-        var ultimoCorrelativo = await context.Pedidos
-            .AsNoTracking()
-            .Where(p => !string.IsNullOrWhiteSpace(p.correlativo))
-            .OrderByDescending(p => p.id)
-            .Select(p => p.correlativo)
-            .FirstOrDefaultAsync();
-
-        if (!string.IsNullOrWhiteSpace(ultimoCorrelativo))
-        {
-            return ConstruirCorrelativo(ultimoCorrelativo, "PED");
-        }
-
-        var totalPedidos = await context.Pedidos.CountAsync();
-        return $"PED-{totalPedidos + 1:D2}";
-    }
-
-    private static string ConstruirCorrelativo(string correlativoActual, string prefijo)
-    {
-        var partes = correlativoActual.Split('-', 2);
-
-        if (partes.Length == 2 && int.TryParse(partes[1], out var numero))
-        {
-            return $"{prefijo}-{numero + 1:D2}";
-        }
-
-        return $"{prefijo}-01";
-    }
+        EstadoPedidoEnum.EnProceso => "En proceso",
+        EstadoPedidoEnum.Entregado => "Entregado",
+        _                         => "Pendiente"
+    };
 }

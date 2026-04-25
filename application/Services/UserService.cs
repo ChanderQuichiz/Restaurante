@@ -1,189 +1,93 @@
-using application.Data;
 using application.Dtos;
 using application.Models;
-using Microsoft.EntityFrameworkCore;
+using application.Repositories;
 
 namespace application.Services;
 
 public class UserService : IUserService
 {
-    private readonly DbAppContext context;
+    private readonly IUsuarioRepository _usuarioRepository;
     private const int PageSize = 10;
 
-    public UserService(DbAppContext context)
+    public UserService(IUsuarioRepository usuarioRepository)
     {
-        this.context = context;
-    }
-
-    public async Task<UserVM> obtenerUserVM(int page = 1, FilterUserDto? filtro = null)
-    {
-        page = page < 1 ? 1 : page;
-
-        var users = await obtenerUsers(page, filtro);
-        var totalUsers = await contarUsers(filtro);
-        var totalPages = (int)Math.Ceiling(totalUsers / (double)PageSize);
-        totalPages = totalPages == 0 ? 1 : totalPages;
-
-        return new UserVM(users, page, totalPages, filtro ?? new FilterUserDto(null, null, null, page));
-    }
-
-    public async Task<List<UserDto>> obtenerUsers(int page = 1, FilterUserDto? filtro = null)
-    {
-        page = page < 1 ? 1 : page;
-
-        var query = context.Usuarios.AsQueryable();
-        query = aplicarFiltros(query, filtro);
-
-        var users = await query
-            .OrderBy(u => u.id)
-            .Skip((page - 1) * PageSize)
-            .Take(PageSize)
-            .ToListAsync();
-
-        return users.Select(mapearDto).ToList();
-    }
-
-    public async Task<int> contarUsers(FilterUserDto? filtro = null)
-    {
-        var query = context.Usuarios.AsQueryable();
-        query = aplicarFiltros(query, filtro);
-
-        return await query.CountAsync();
+        _usuarioRepository = usuarioRepository;
     }
 
     public async Task<UserDto?> crearUser(CreateUserDto createUserDto)
     {
         var user = new UsuarioModel
         {
-            correlativo = await ObtenerSiguienteCorrelativoAsync(),
-            nombre = createUserDto.nombre,
-            email = createUserDto.email,
-            contrasena = createUserDto.contrasena,
-            rol = createUserDto.rol,
-            estado = createUserDto.estado,
+            nombre          = createUserDto.nombre,
+            email           = createUserDto.email,
+            contrasena      = createUserDto.contrasena,
+            rol             = createUserDto.rol,
+            estado          = createUserDto.estado,
             fechaExpiracion = createUserDto.fechaExpiracion,
-            dni = createUserDto.dni
+            dni             = createUserDto.dni
         };
 
-        await context.Usuarios.AddAsync(user);
-        await context.SaveChangesAsync();
-
-        return mapearDto(user);
+        user = await _usuarioRepository.Add(user); 
+        return MapearDto(user);
     }
 
     public async Task<UserDto?> actualizarUser(UserDto userDto)
     {
-        var user = await context.Usuarios.FirstOrDefaultAsync(u => u.id == userDto.id);
-        if (user == null)
-        {
-            return null;
-        }
+        var user = await _usuarioRepository.GetById(userDto.id);
+        if (user == null) return null;
 
-        user.nombre = userDto.nombre;
-        user.email = userDto.email;
-        user.contrasena = userDto.contrasena;
-        user.rol = userDto.rol;
-        user.estado = userDto.estado;
+        user.nombre          = userDto.nombre;
+        user.email           = userDto.email;
+        user.contrasena      = userDto.contrasena;
+        user.rol             = userDto.rol;
+        user.estado          = userDto.estado;
         user.fechaExpiracion = userDto.fechaExpiracion;
-        user.dni = userDto.dni;
+        user.dni             = userDto.dni;
 
-        await context.SaveChangesAsync();
-
-        return mapearDto(user);
+        await _usuarioRepository.Update();
+        return MapearDto(user);
     }
 
     public async Task<UserDto?> obtenerUserPorId(int id)
     {
-        var user = await context.Usuarios.FirstOrDefaultAsync(u => u.id == id);
-        return user == null ? null : mapearDto(user);
+        var user = await _usuarioRepository.GetById(id);
+        return user == null ? null : MapearDto(user);
     }
 
     public async Task<bool> eliminarUser(int id)
     {
-        var user = await context.Usuarios.FirstOrDefaultAsync(u => u.id == id);
-        if (user == null)
-        {
-            return false;
-        }
+        var user = await _usuarioRepository.GetById(id);
+        if (user == null) return false;
 
         user.estado = "Inactivo";
-        await context.SaveChangesAsync();
+        await _usuarioRepository.Update();
         return true;
     }
 
-    private static IQueryable<UsuarioModel> aplicarFiltros(IQueryable<UsuarioModel> query, FilterUserDto? filtro)
+    public async Task<List<UserDto>> obtenerUsers(int page = 1, FilterUserDto? filtro = null)
     {
-        if (filtro == null)
-        {
-            return query;
-        }
-
-        if (!string.IsNullOrWhiteSpace(filtro.buscar))
-        {
-            var txt = filtro.buscar.Trim();
-            query = query.Where(u =>
-                u.correlativo.Contains(txt) ||
-                u.nombre.Contains(txt) ||
-                u.email.Contains(txt) ||
-                (u.dni != null && u.dni.Contains(txt)));
-        }
-
-        if (!string.IsNullOrWhiteSpace(filtro.rol))
-        {
-            query = query.Where(u => u.rol == filtro.rol);
-        }
-
-        if (!string.IsNullOrWhiteSpace(filtro.estado))
-        {
-            query = query.Where(u => u.estado == filtro.estado);
-        }
-
-        return query;
+        page = page < 1 ? 1 : page;
+        var users = await _usuarioRepository.GetAll(page, PageSize, filtro);
+        return users.Select(MapearDto).ToList();
     }
 
-    private static UserDto mapearDto(UsuarioModel user)
+    public async Task<int> contarUsers(FilterUserDto? filtro = null)
+        => await _usuarioRepository.Count(filtro);
+
+    public async Task<UserVM> obtenerUserVM(int page = 1, FilterUserDto? filtro = null)
     {
-        return new UserDto(
-            user.id,
-            user.correlativo,
-            user.nombre,
-            user.email,
-            user.contrasena,
-            user.rol,
-            user.estado,
-            user.fechaExpiracion,
-            user.dni
-        );
+        page = page < 1 ? 1 : page;
+
+        var users      = await obtenerUsers(page, filtro);
+        var total      = await contarUsers(filtro);
+        var totalPages = Math.Max(1, (int)Math.Ceiling(total / (double)PageSize));
+
+        return new UserVM(users, page, totalPages, filtro ?? new FilterUserDto(null, null, null, page));
     }
 
-    private async Task<string> ObtenerSiguienteCorrelativoAsync()
-    {
-        var ultimoCorrelativo = await context.Usuarios
-            .AsNoTracking()
-            .Where(u => !string.IsNullOrWhiteSpace(u.correlativo))
-            .OrderByDescending(u => u.id)
-            .Select(u => u.correlativo)
-            .FirstOrDefaultAsync();
 
-        if (!string.IsNullOrWhiteSpace(ultimoCorrelativo))
-        {
-            return ConstruirCorrelativo(ultimoCorrelativo, "USU");
-        }
-
-        var totalUsers = await context.Usuarios.CountAsync();
-        return $"USU-{totalUsers + 1:D2}";
-    }
-
-    private static string ConstruirCorrelativo(string correlativoActual, string prefijo)
-    {
-        var partes = correlativoActual.Split('-', 2);
-
-        if (partes.Length == 2 && int.TryParse(partes[1], out var numero))
-        {
-            return $"{prefijo}-{numero + 1:D2}";
-        }
-
-        return $"{prefijo}-01";
-    }
-
+    private static UserDto MapearDto(UsuarioModel u) => new(
+        u.id, u.correlativo, u.nombre, u.email,
+        u.contrasena, u.rol, u.estado, u.fechaExpiracion, u.dni
+    );
 }

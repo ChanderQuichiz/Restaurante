@@ -1,158 +1,65 @@
-using application.Data;
 using application.Dtos;
 using application.Models;
+using application.Repositories;
 using application.Utils;
-using Microsoft.EntityFrameworkCore;
 
 namespace application.Services;
 
 public class PagoService : IPagoService
 {
-    private readonly DbAppContext context;
+    private readonly IPagoRepository    _pagoRepository;
+    private readonly IUsuarioRepository _usuarioRepository;
+    private readonly IPedidoRepository  _pedidoRepository;
     private const int PageSize = 10;
 
-    public PagoService(DbAppContext context)
+    public PagoService(
+        IPagoRepository    pagoRepository,
+        IUsuarioRepository usuarioRepository,
+        IPedidoRepository  pedidoRepository)
     {
-        this.context = context;
+        _pagoRepository    = pagoRepository;
+        _usuarioRepository = usuarioRepository;
+        _pedidoRepository  = pedidoRepository;
     }
 
-    public async Task<PagoVM> obtenerPagoVM(int page = 1, FiltrarPagoDto? filtro = null)
+    public async Task<PagoDto?> crearPagoDto(CrearPagoDto crearPagoDto)
     {
-        page = page < 1 ? 1 : page;
+        var pago       = PagoMapper.ToPagoModel(crearPagoDto);
+        pago.fecha     = pago.fecha == default ? DateTime.Now : pago.fecha;
 
-        var pagos = await obtenerPagos(page, filtro);
-        var totalPagos = await contarPagos(filtro);
-        var totalPages = (int)Math.Ceiling(totalPagos / (double)PageSize);
-        totalPages = totalPages == 0 ? 1 : totalPages;
+        pago = await _pagoRepository.Add(pago); // correlativo generado en el repo
+        await _pagoRepository.LoadUsuario(pago);
 
-        return new PagoVM(pagos, page, totalPages, filtro ?? new FiltrarPagoDto(null, null, null, page));
+        return PagoMapper.ToPagoDto(pago);
     }
 
     public async Task<List<PagoDto>> obtenerPagos(int page = 1, FiltrarPagoDto? filtro = null)
     {
         page = page < 1 ? 1 : page;
-
-        var query = context.Pagos
-            .Include(p => p.Usuario)
-            .AsQueryable();
-
-        query = AplicarFiltros(query, filtro);
-
-        var lista = await query
-            .Skip((page - 1) * PageSize)
-            .Take(PageSize)
-            .ToListAsync();
-
+        var lista = await _pagoRepository.GetAll(page, PageSize, filtro);
         return lista.Select(PagoMapper.ToPagoDto).ToList();
     }
 
     public async Task<int> contarPagos(FiltrarPagoDto? filtro = null)
+        => await _pagoRepository.Count(filtro);
+
+    public async Task<PagoVM> obtenerPagoVM(int page = 1, FiltrarPagoDto? filtro = null)
     {
-        var query = context.Pagos.AsQueryable();
+        page = page < 1 ? 1 : page;
 
-        query = AplicarFiltros(query, filtro);
+        var pagos      = await obtenerPagos(page, filtro);
+        var total      = await contarPagos(filtro);
+        var totalPages = Math.Max(1, (int)Math.Ceiling(total / (double)PageSize));
 
-        return await query.CountAsync();
+        return new PagoVM(pagos, page, totalPages, filtro ?? new FiltrarPagoDto(null, null, null, page));
     }
-
-    public async Task<PagoDto?> crearPagoDto(CrearPagoDto crearPagoDto)
-    {
-        var pago = PagoMapper.ToPagoModel(crearPagoDto);
-        pago.correlativo = await ObtenerSiguienteCorrelativoAsync();
-
-        if (pago.fecha == default)
-        {
-            pago.fecha = DateTime.Now;
-        }
-
-        await context.Pagos.AddAsync(pago);
-        await context.SaveChangesAsync();
-
-        await context.Entry(pago).Reference(p => p.Usuario).LoadAsync();
-
-        return PagoMapper.ToPagoDto(pago);
-    }
-
-
 
     public async Task<List<UsuarioModel>> obtenerCajerosActivos()
     {
-        var cajeros = await context.Usuarios
-            .Where(u => u.estado == "Activo" && u.rol == "Cajero")
-            .OrderBy(u => u.nombre)
-            .ToListAsync();
-
-        if (cajeros.Count == 0)
-        {
-            cajeros = await context.Usuarios
-                .Where(u => u.estado == "Activo")
-                .OrderBy(u => u.nombre)
-                .ToListAsync();
-        }
-
-        return cajeros;
+        var cajeros = await _usuarioRepository.GetActivosByRol("Cajero");
+        return cajeros.Count > 0 ? cajeros : await _usuarioRepository.GetActivos();
     }
 
     public async Task<List<PedidoModel>> obtenerPedidos()
-    {
-        return await context.Pedidos
-            .ToListAsync();
-    }
-
-    private static IQueryable<PagoModel> AplicarFiltros(IQueryable<PagoModel> query, FiltrarPagoDto? filtro)
-    {
-        if (filtro == null)
-        {
-            return query;
-        }
-
-        if (!string.IsNullOrWhiteSpace(filtro.buscar))
-        {
-            var txt = filtro.buscar.Trim();
-            query = query.Where(p => p.correlativo.Contains(txt) || p.pedidoId.ToString().Contains(txt));
-        }
-
-        if (!string.IsNullOrWhiteSpace(filtro.metodo))
-        {
-            query = query.Where(p => p.metodoPago == filtro.metodo);
-        }
-
-        if (filtro.fecha.HasValue)
-        {
-            var fecha = filtro.fecha.Value.Date;
-            query = query.Where(p => p.fecha.Date == fecha);
-        }
-
-        return query;
-    }
-
-    private async Task<string> ObtenerSiguienteCorrelativoAsync()
-    {
-        var ultimoCorrelativo = await context.Pagos
-            .AsNoTracking()
-            .Where(p => !string.IsNullOrWhiteSpace(p.correlativo))
-            .OrderByDescending(p => p.id)
-            .Select(p => p.correlativo)
-            .FirstOrDefaultAsync();
-
-        if (!string.IsNullOrWhiteSpace(ultimoCorrelativo))
-        {
-            return ConstruirCorrelativo(ultimoCorrelativo, "PAG");
-        }
-
-        var totalPagos = await context.Pagos.CountAsync();
-        return $"PAG-{totalPagos + 1:D2}";
-    }
-
-    private static string ConstruirCorrelativo(string correlativoActual, string prefijo)
-    {
-        var partes = correlativoActual.Split('-', 2);
-
-        if (partes.Length == 2 && int.TryParse(partes[1], out var numero))
-        {
-            return $"{prefijo}-{numero + 1:D2}";
-        }
-
-        return $"{prefijo}-01";
-    }
+        => await _pedidoRepository.GetTodos();
 }

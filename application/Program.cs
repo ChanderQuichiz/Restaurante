@@ -2,16 +2,24 @@
 using application.Data;
 using application.Services;
 using Microsoft.AspNetCore.Http;
+using application.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IMesaRepository,MesaRepository>();
+builder.Services.AddScoped<IPlatoRepository,PlatoRepository>();
+builder.Services.AddScoped<IUsuarioRepository,UsuarioRepository>();
+builder.Services.AddScoped<IPedidoRepository,PedidoRepository>();
+builder.Services.AddScoped<IPagoRepository,PagoRepository>();
+
 builder.Services.AddScoped<IMesaService, MesaService>();
 builder.Services.AddScoped<IPlatoService, PlatoService>();
 builder.Services.AddScoped<IPedidoService, PedidoService>();
 builder.Services.AddScoped<IPagoService, PagoService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options =>
 {
